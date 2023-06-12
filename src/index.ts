@@ -7,6 +7,7 @@ import { ApolloServer} from 'apollo-server-express';
 import { resolvers } from './resolvers';
 import { connection } from './utils/mongo';
 import {PubSub} from 'graphql-subscriptions'
+import cors from 'cors'
 // import { consumer } from './utils/kafka';
 
 
@@ -41,6 +42,7 @@ async function bootstrap(){
   // apply cookie parser as middleware
   app.use(cookieParser());
   
+  app.use(cors())
   // create apollo server
   const server = new ApolloServer({
     schema,
