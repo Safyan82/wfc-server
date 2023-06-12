@@ -2,6 +2,7 @@ import { prop, getModelForClass, pre } from "@typegoose/typegoose";
 import {Field, ObjectType, InputType} from "type-graphql";
 import {IsEmail, MinLength, MaxLength} from 'class-validator';
 import bcrypt from 'bcrypt';
+import GraphQLJSON from "graphql-type-json";
 
 
 // pre save hook to bcrypt the password
@@ -52,9 +53,9 @@ export class User{
     @prop({required: false})
     password?: string;
 
-    @Field(()=>String)
-    @prop()
-    kafkaMessage:JSON;
+    @Field(()=>GraphQLJSON,{nullable:true})
+    @prop({required:false})
+    kafkaMessage?:any;
 }
 
 

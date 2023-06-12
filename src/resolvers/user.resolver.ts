@@ -22,7 +22,7 @@ export default class UserResolver {
         return{
             _id: "123",
             name: "Safyan",
-            email: "Safyan@gmail.com",
+            email: "Safyan@gmail.com"
         }
     }
 }

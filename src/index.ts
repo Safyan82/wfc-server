@@ -7,7 +7,7 @@ import { ApolloServer} from 'apollo-server-express';
 import { resolvers } from './resolvers';
 import { connection } from './utils/mongo';
 import {PubSub} from 'graphql-subscriptions'
-import { consumer } from './utils/kafka';
+// import { consumer } from './utils/kafka';
 
 
 dotenv.config();
