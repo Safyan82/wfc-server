@@ -1,4 +1,4 @@
-import { BranchModal, createBranchInput } from "../schema/branch.schema";
+import { BranchModal, createBranchInput } from "../../schema/branchSchema/branch.schema";
 
 export default class BranchService{
     async createBranch(input: createBranchInput){

@@ -1,6 +1,6 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { Branch, Branches, createBranchInput } from "../schema/branch.schema";
-import BranchService from "../service/branch.service";
+import { Branch, Branches, createBranchInput } from "../../schema/branchSchema/branch.schema";
+import BranchService from "../../service/branchService/branch.service";
 
 @Resolver()
 export default class BranchResolver {
