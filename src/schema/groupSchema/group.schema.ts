@@ -1,8 +1,12 @@
 import { Prop, getModelForClass } from "@typegoose/typegoose";
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, ID, InputType, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class Group{
+
+    @Field(()=>ID,{nullable:true})
+    _id?:string
+
     @Field(()=>String,{nullable:true})
     key?:string
 
@@ -10,9 +14,9 @@ export class Group{
     @Prop()
     name: string
 
-    @Field(()=>Number,{nullable:true, defaultValue:0})
+    @Field(()=>Number,{defaultValue:0})
     @Prop()
-    properties?: number
+    properties: number
 
     @Field(()=>String)
     @Prop()
@@ -49,11 +53,11 @@ export class createGroupResponse{
 
 @InputType()
 export class GroupInput{
-    @Field(()=>String,{nullable: true})
-    groupId: String
+    @Field(()=>ID,{nullable: true})
+    groupId?: string
 
-    @Field(()=>String)
-    name: String
+    @Field(()=>String,{nullable: true})
+    name?: string
 
     @Field(()=>String, {nullable: true})
     createdBy?: string

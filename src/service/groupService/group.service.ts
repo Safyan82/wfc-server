@@ -9,7 +9,7 @@ export class GroupService{
             if(isExist){
                 throw new Error("Group already exist");
             }
-            await GroupModal.create({...input, createdAt: dayjs() })
+            await GroupModal.create({...input, properties:0, createdAt: dayjs() })
             return {
                 message: "Group added",
                 success: 1,
@@ -22,8 +22,8 @@ export class GroupService{
 
     async updateGroup(input: GroupInput){
         try{
-            const {groupId:_id} = input;
-            return await GroupModal.updateOne({_id},{...input, updatedAt: dayjs()});
+            const {groupId:_id, ...rest} = input;
+            return await GroupModal.updateOne({_id},{...rest, updatedAt: dayjs()});
 
         }
         catch(err:any){
@@ -53,12 +53,34 @@ export class GroupService{
                       _id: 1,
                       // Include other fields if needed
                       name: 1,
+                      properties:1,
 
                     }
                 }
             ]);
-            console.log(group);
             return group;
+        }
+        catch(err:any){
+            throw new Error(err.message);
+        }
+    }
+
+    async findGroupById(_id){
+        try{
+            const {properties} = await GroupModal.findById(_id);
+            return properties;
+        }
+        catch(err:any){
+            throw new Error(err);
+        }
+    }
+
+    async updateNumberOfProperties(_id){
+        try{
+            const properties = await this.findGroupById(_id);
+            const inUse = properties+1;
+            await GroupModal.updateOne({_id},{properties: inUse});
+            return true;
         }
         catch(err:any){
             throw new Error(err.message);
