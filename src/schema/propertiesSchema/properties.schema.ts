@@ -18,8 +18,12 @@ export class Properties{
     @Prop()
     objectType?: string
 
-    @Field(()=>Group,{nullable: true})
-    @Prop({ref: GroupModal})
+    // @Field(()=>Group,{nullable: true})
+    // @Prop({ref: GroupModal})
+    // groupId?: string
+    
+    @Field(()=>String,{nullable: true})
+    @Prop()
     groupId?: string
 
     @Field(()=>String,{nullable: true})
@@ -75,6 +79,11 @@ export class Properties{
     @Field(()=>Boolean,{nullable: true})
     @Prop()
     isDelete?: boolean
+
+    
+    @Field(()=>GraphQLJSON,{nullable:true})
+    @Prop()
+    options?: any;
     
     // @Field(()=>Group)
     // @Prop({ required: true, ref: () => Group })
@@ -129,6 +138,9 @@ export class PropertiesInput{
 
     @Field(()=>GraphQLJSON,{nullable:true})
     rules?: any;
+
+    @Field(()=>GraphQLJSON,{nullable:true})
+    options?: any;
 
 }
 

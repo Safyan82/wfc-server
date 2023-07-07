@@ -41,4 +41,9 @@ export class PropertiesResolver{
     getArchiveProperties(){
         return this.propertiesService.archivePropertyList();
     }
+
+    @Query(()=>Properties)
+    getPropertyById(@Arg('id') id:string){
+        return this.propertiesService.getPropertyById(id);
+    }
 }

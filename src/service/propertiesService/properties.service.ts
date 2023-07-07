@@ -56,7 +56,8 @@ export class PropertiesService{
                   createdBy: 1,
                   updatedAt: 1,
                   updatedBy: 1,
-                  groupName: 1
+                  groupName: 1,
+                  options:1,
                 }
             },
             
@@ -160,6 +161,10 @@ export class PropertiesService{
         }catch(err:any){
             throw new Error(err.message);
         }
+    }
+
+    async getPropertyById(_id){
+        return await PropertiesModal.findById(_id);
     }
 
 }
