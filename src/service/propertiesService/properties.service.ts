@@ -26,6 +26,29 @@ export class PropertiesService{
         }
     }
 
+    
+    async updateProperties(input:PropertiesInput){
+        try{
+            const groupService = new GroupService();
+
+            await PropertiesModal.updateOne({_id:input.id},{...input, 
+               updatedAt: dayjs()});
+            
+            await groupService.updateNumberOfProperties(input.groupId);
+            return {
+                message: "Property updated successfully",
+                success: 1,
+            }
+        }
+        catch(err:any){
+            return{
+                message: "An Error encountered while adding property",
+                success: 0,
+            }
+        }
+    }
+
+
     async propertyList(){
         const properties = await PropertiesModal
         .aggregate([

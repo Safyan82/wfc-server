@@ -14,6 +14,11 @@ export class PropertiesResolver{
         return this.propertiesService.createProperties(input);
     }
 
+    @Mutation(()=>GenericPropertyResponse)
+    updateProperty(@Arg('input', {validate: true}) input: PropertiesInput){
+        return this.propertiesService.updateProperties(input);
+    }
+
     @Query(()=>[Properties])
     propertyList(){
         return this.propertiesService.propertyList();
