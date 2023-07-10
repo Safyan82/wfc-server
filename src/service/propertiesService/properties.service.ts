@@ -190,4 +190,58 @@ export class PropertiesService{
         return await PropertiesModal.findById(_id);
     }
 
+    async getPropertyByGroupId(groupId){
+        return await PropertiesModal
+        .aggregate([
+            {
+                
+                $match: {
+                    $and: [
+                        {isArchive: { $eq: false }},
+                        {isDelete: {$eq: false}},
+                        {groupId: {$eq: groupId}},
+                    ]
+                }
+            },
+
+            
+            {
+                $project: {
+                  key: "$_id",
+                  _id: 1,
+                  // Include other fields if needed
+                  objectType: 1,
+                  groupId: 1,
+                  label: 1,
+                  fieldType: 1,
+                  rules: 1,
+                  useIn: 1,
+                  description: 1,
+                  createdAt: 1,
+                  createdBy: 1,
+                  updatedAt: 1,
+                  updatedBy: 1,
+                  groupName: 1,
+                  options:1,
+                }
+            },
+        ]);
+    }
+
+    async deletePropertiestesById(groupId){
+        try{
+            const groupService = new GroupService();
+            await groupService.updateNumberOfPropertiesOnDelete(groupId);
+
+            await PropertiesModal.updateMany({groupId},{
+                $set: {isDelete: true}
+            });
+            return true;
+        }
+        catch(err){
+            return false;
+        }
+        
+    }
+
 }

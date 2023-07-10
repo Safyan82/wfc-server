@@ -1,5 +1,6 @@
 import { GroupInput, GroupModal } from "../../schema/groupSchema/group.schema";
 import dayjs from 'dayjs';
+import { PropertiesService } from "../propertiesService/properties.service";
 
 export class GroupService{
     async createGroup(input: GroupInput){
@@ -23,8 +24,12 @@ export class GroupService{
     async updateGroup(input: GroupInput){
         try{
             const {groupId:_id, ...rest} = input;
-            return await GroupModal.updateOne({_id},{...rest, updatedAt: dayjs()});
-
+            console.log({...rest, updatedAt: dayjs()});
+            await GroupModal.updateOne({_id},{...rest, updatedAt: dayjs()});
+            return {
+                message: "Group was updated",
+                success: 1,
+            }
         }
         catch(err:any){
             throw new Error(err.message);
@@ -33,7 +38,9 @@ export class GroupService{
 
     async deleteGroup(_id:string){
         try{
-            await GroupModal.updateOne({_id},{isDeleted:1});
+            const propertyService = new PropertiesService();
+            await propertyService.deletePropertiestesById(_id);
+            await GroupModal.updateOne({_id},{isDeleted:1, properties: 0});
             return{
                 message: "deleted",
                 success: 1,
@@ -47,6 +54,16 @@ export class GroupService{
     async groupList(){
         try{
             const group = await GroupModal.aggregate([
+                
+                {
+                    
+                    $match: {
+                        $or: [
+                            {isDeleted: {$eq: false}},
+                            {isDeleted: {$exists: false}},
+                        ]
+                    }
+                },
                 {
                     $project: {
                       key: "$_id",
@@ -79,6 +96,18 @@ export class GroupService{
         try{
             const properties = await this.findGroupById(_id);
             const inUse = properties+1;
+            await GroupModal.updateOne({_id},{properties: inUse});
+            return true;
+        }
+        catch(err:any){
+            throw new Error(err.message);
+        }
+    }
+
+    async updateNumberOfPropertiesOnDelete(_id){
+        try{
+            const properties = await this.findGroupById(_id);
+            const inUse = properties-1;
             await GroupModal.updateOne({_id},{properties: inUse});
             return true;
         }

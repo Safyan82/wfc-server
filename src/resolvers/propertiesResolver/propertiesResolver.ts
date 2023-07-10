@@ -51,4 +51,9 @@ export class PropertiesResolver{
     getPropertyById(@Arg('id') id:string){
         return this.propertiesService.getPropertyById(id);
     }
+
+    @Query(()=>[Properties])
+    getPropertyByGroupId(@Arg('groupId') groupId:string){
+        return this.propertiesService.getPropertyByGroupId(groupId)
+    }
 }
