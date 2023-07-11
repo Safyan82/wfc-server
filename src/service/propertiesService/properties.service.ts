@@ -178,6 +178,54 @@ export class PropertiesService{
                 
                 
             ]);
+            return properties;
+
+        }catch(err:any){
+            throw new Error(err.message);
+        }
+    }
+
+    async archivePropertyFilter(startDate, endDate){
+        try{
+            const properties = await PropertiesModal
+            .aggregate([
+                {
+                    
+                    $match: {
+                        $and: [
+                            {isArchive: { $eq: true }},
+                            {isDelete: {$eq: false}},                            
+                            {archiveTime : {
+                                $gte: startDate.toString(),
+                                $lte: endDate.toString()
+                            }}
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        key: "$_id",
+                        _id: 1,
+                        // Include other fields if needed
+                        objectType: 1,
+                        groupId: 1,
+                        label: 1,
+                        fieldType: 1,
+                        rules: 1,
+                        useIn: 1,
+                        description: 1,
+                        createdAt: 1,
+                        createdBy: 1,
+                        updatedAt: 1,
+                        updatedBy: 1,
+                        groupName: 1,
+                        isArchive:1,
+                        archiveTime:1,
+                    },
+                },
+                
+                
+            ]);
             console.log(properties);
             return properties;
 
@@ -244,4 +292,49 @@ export class PropertiesService{
         
     }
 
+    
+    async getPropertywithFilters(field, value){
+
+        const matchStage = {
+            $match: {
+              $and: []
+            }
+          };
+        
+          if (field && value) {
+            matchStage.$match.$and.push({ [field]: value });
+            matchStage.$match.$and.push({ isArchive: false });
+            matchStage.$match.$and.push({ isDelete: false });
+          }else{
+            matchStage.$match.$and.push({ isArchive: false });
+            matchStage.$match.$and.push({ isDelete: false });
+         
+          }
+        
+
+        return await PropertiesModal
+        .aggregate([
+            matchStage,            
+            {
+                $project: {
+                  key: "$_id",
+                  _id: 1,
+                  // Include other fields if needed
+                  objectType: 1,
+                  groupId: 1,
+                  label: 1,
+                  fieldType: 1,
+                  rules: 1,
+                  useIn: 1,
+                  description: 1,
+                  createdAt: 1,
+                  createdBy: 1,
+                  updatedAt: 1,
+                  updatedBy: 1,
+                  groupName: 1,
+                  options:1,
+                }
+            },
+        ]);
+    }
 }

@@ -56,4 +56,16 @@ export class PropertiesResolver{
     getPropertyByGroupId(@Arg('groupId') groupId:string){
         return this.propertiesService.getPropertyByGroupId(groupId)
     }
+
+    @Query(()=>[Properties])
+    getPropertywithFilters(@Arg('field', {nullable:true}) field?:string, @Arg('value', {nullable:true}) value?:string){
+        return this.propertiesService.getPropertywithFilters(field, value);
+    }
+
+    @Query(()=>[Properties])
+    archivePropertyFilter(@Arg('startDate') startDate:string, @Arg('endDate') endDate:string){
+        return this.propertiesService.archivePropertyFilter(startDate, endDate);
+    }
+
+    
 }
