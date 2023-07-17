@@ -71,7 +71,7 @@ export class Properties{
     @Prop()
     isArchive?: boolean
     
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @Prop()
     archiveTime: string
 
