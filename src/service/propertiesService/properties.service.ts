@@ -297,7 +297,7 @@ export class PropertiesService{
     }
 
     
-    async getPropertywithFilters(field, value){
+    async getPropertywithFilters({fields}){
 
         const matchStage = {
             $match: {
@@ -305,8 +305,13 @@ export class PropertiesService{
             }
           };
         
-          if (field && value) {
-            matchStage.$match.$and.push({ [field]: value });
+
+          if (fields && Object.keys(fields)?.length) {
+            fields?.map((fld)=>{
+                if(fld.value){
+                    matchStage.$match.$and.push({ [fld.field]: fld.value });
+                }
+            })
             matchStage.$match.$and.push({ isArchive: false });
             matchStage.$match.$and.push({ isDelete: false });
           }else{

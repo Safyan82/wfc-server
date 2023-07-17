@@ -1,6 +1,6 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { PropertiesService } from "../../service/propertiesService/properties.service";
-import { ArchivePropertyInput, BulkPropertiesArchive, GenericPropertyResponse, MoveGroupInput, Properties, PropertiesInput } from "../../schema/propertiesSchema/properties.schema";
+import { ArchivePropertyInput, BulkPropertiesArchive, GenericPropertyResponse, MoveGroupInput, Properties, PropertiesInput, PropertyWithFilterInput } from "../../schema/propertiesSchema/properties.schema";
 
 @Resolver()
 export class PropertiesResolver{
@@ -59,8 +59,8 @@ export class PropertiesResolver{
     }
 
     @Query(()=>[Properties])
-    getPropertywithFilters(@Arg('field', {nullable:true}) field?:string, @Arg('value', {nullable:true}) value?:string){
-        return this.propertiesService.getPropertywithFilters(field, value);
+    getPropertywithFilters(@Arg('input', {nullable:true}) input:PropertyWithFilterInput, ){
+        return this.propertiesService.getPropertywithFilters(input);
     }
 
     @Query(()=>[Properties])

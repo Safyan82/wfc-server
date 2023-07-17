@@ -102,6 +102,13 @@ export class GenericPropertyResponse{
     success: boolean
 }
 
+
+@InputType()
+export class PropertyWithFilterInput{
+    @Field(()=> GraphQLJSON)
+    fields: any
+}
+
 @InputType()
 export class ArchivePropertyInput{
       
