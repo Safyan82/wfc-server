@@ -2,7 +2,7 @@ import { Prop, Ref, getModelForClass } from "@typegoose/typegoose";
 import GraphQLJSON from "graphql-type-json";
 import { ObjectId } from "mongoose";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { Group, GroupModal } from "../groupSchema/group.schema";
+
 
 @ObjectType()
 export class Properties{
@@ -142,6 +142,23 @@ export class PropertiesInput{
     @Field(()=>GraphQLJSON,{nullable:true})
     options?: any;
 
+}
+
+@InputType()
+export class BulkPropertiesArchive{
+    @Field(()=>GraphQLJSON)
+    ids: string
+}
+
+@InputType()
+export class MoveGroupInput{
+    @Field(()=>GraphQLJSON)
+    properties: string
+
+    @Field(()=>String)
+    groupId: string
+    @Field(()=>String)
+    groupName: string
 }
 
 export const PropertiesModal = getModelForClass(Properties);

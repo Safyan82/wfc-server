@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { PropertiesInput, PropertiesModal } from "../../schema/propertiesSchema/properties.schema";
 import { GroupService } from "../groupService/group.service";
+import { GroupModal } from "../../schema/groupSchema/group.schema";
 
 export class PropertiesService{
     
@@ -129,6 +130,9 @@ export class PropertiesService{
     async deleteProperty(input){
         try{
             const { id:_id, } = input
+            const {groupId} = await this.getPropertyById(_id);
+            const groupService = new GroupService();
+            await groupService.updateNumberOfPropertiesOnDelete(groupId);
             await PropertiesModal.updateOne({ _id },{ isDelete: true, });
             return {
                 message: 'Property archived successfully',
@@ -336,5 +340,64 @@ export class PropertiesService{
                 }
             },
         ]);
+    }
+
+    async moveGroup({properties, groupId, groupName}){
+        const _ids = properties.map((property)=>property.key);
+        const groupIds = properties.map((property)=>property.groupId);
+        await PropertiesModal.updateMany(
+            { _id: { $in: _ids } },
+            { $set: { groupId, groupName } }
+        );
+        const groupService = new GroupService();
+
+        // update the prev group by removing property from them
+        for(let i=0;i<properties.length;i++){
+            
+            const group = await GroupModal.findOne({_id: properties[i].groupId});
+            // Subtract 1 from the numberOfProperties field
+            const updatedNumberOfProperties = group.properties - 1;
+            // Update the document with the new value
+            await GroupModal.updateOne(
+                { _id: group._id },
+                { $set: { properties: updatedNumberOfProperties } }
+            );
+
+        }
+        
+
+        // update number of properties in which the properties are being moving
+        await groupService.bulkUpdateNumberOfProperties(groupId, properties.length);
+        return {
+            success: 1,
+            message : JSON.stringify(groupIds),
+        }
+    }
+
+    async archiveBulkProperties({ids}){
+        try{
+            await PropertiesModal.updateMany(
+            { _id: { $in: ids } },
+            { $set: { isArchive: 1 } });
+            
+            return {success: 1, message: 'properties archived successfully'};            
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+    
+    async unarchiveBulkProperties({ids}){
+        try{
+            await PropertiesModal.updateMany(
+            { _id: { $in: ids } },
+            { $set: { isArchive: 0 } });
+            
+            return {success: 1, message: 'properties unArchived successfully'};            
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
     }
 }

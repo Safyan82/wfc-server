@@ -104,14 +104,23 @@ export class GroupService{
         }
     }
 
-    async updateNumberOfPropertiesOnDelete(_id){
+    async updateNumberOfPropertiesOnDelete(_id, inUse){
         try{
-            const properties = await this.findGroupById(_id);
-            const inUse = properties-1;
-            await GroupModal.updateOne({_id},{properties: inUse});
-            return true;
+            console.log(inUse, "IN USEEEEEE");
+            await GroupModal.findOneAndUpdate({_id},{$set:{properties: inUse}}, {returnOriginal: false});
         }
         catch(err:any){
+            throw new Error(err.message);
+        }
+    }
+
+    async bulkUpdateNumberOfProperties(_id, propertyNum){
+        try{
+            const properties = await this.findGroupById(_id);
+            const total = propertyNum + properties
+            await GroupModal.updateOne({_id},{properties: total})
+        }
+        catch(err){
             throw new Error(err.message);
         }
     }

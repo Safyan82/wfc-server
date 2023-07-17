@@ -10,7 +10,7 @@ export class Group{
     @Field(()=>String,{nullable:true})
     key?:string
 
-    @Field(()=>String)
+    @Field(()=>String,{nullable:true})
     @Prop()
     name: string
 
