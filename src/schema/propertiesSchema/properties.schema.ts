@@ -156,6 +156,11 @@ export class BulkPropertiesArchive{
     @Field(()=>GraphQLJSON)
     ids: string
 }
+@InputType()
+export class BulkPropertiesDelete{
+    @Field(()=>GraphQLJSON)
+    properties: string
+}
 
 @InputType()
 export class MoveGroupInput{

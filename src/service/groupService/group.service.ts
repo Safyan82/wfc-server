@@ -6,7 +6,7 @@ export class GroupService{
     async createGroup(input: GroupInput){
         try{
             const { name } = input;
-            const isExist = await GroupModal.findOne({name});
+            const isExist = await GroupModal.findOne({name, isDeleted: false});
             if(isExist){
                 throw new Error("Group already exist");
             }
@@ -24,7 +24,8 @@ export class GroupService{
     async updateGroup(input: GroupInput){
         try{
             const {groupId:_id, ...rest} = input;
-            console.log({...rest, updatedAt: dayjs()});
+            const propertyService = new PropertiesService();
+            await propertyService.updatePropertiesByGroupId(_id, rest.name)
             await GroupModal.updateOne({_id},{...rest, updatedAt: dayjs()});
             return {
                 message: "Group was updated",
@@ -36,10 +37,24 @@ export class GroupService{
         }
     }
 
-    async deleteGroup(_id:string){
+    async findGroupNameById(_id){
+        
+        try{
+            const {name} = await GroupModal.findById(_id);
+            return name;
+        }
+        catch(err:any){
+            throw new Error(err);
+        }
+    }
+    async deleteGroup(_id:string, groupIdToMoveIn:string){
         try{
             const propertyService = new PropertiesService();
-            await propertyService.deletePropertiestesById(_id);
+            const properties = await propertyService.getPropertyByGroupId(_id);
+            const newGroupName = await this.findGroupNameById(groupIdToMoveIn);
+            await propertyService.updatePropertiesGroup(groupIdToMoveIn, _id, newGroupName);
+            const alreadyInUse = await this.findGroupById(groupIdToMoveIn);
+            await GroupModal.updateOne({_id: groupIdToMoveIn},{properties: (Number(properties.length)+Number(alreadyInUse)) })
             await GroupModal.updateOne({_id},{isDeleted:1, properties: 0});
             return{
                 message: "deleted",
@@ -102,11 +117,22 @@ export class GroupService{
         catch(err:any){
             throw new Error(err.message);
         }
+    }  
+    
+    async updateNumberOfArchivePropertiesOnDelete(_id){
+        try{
+            const properties = await this.findGroupById(_id);
+            const inUse = properties-1;
+            await GroupModal.updateOne({_id}, {$set: {properties: inUse}});
+            return true;
+        }
+        catch(err:any){
+            throw new Error(err.message);
+        }
     }
 
     async updateNumberOfPropertiesOnDelete(_id, inUse){
         try{
-            console.log(inUse, "IN USEEEEEE");
             await GroupModal.findOneAndUpdate({_id},{$set:{properties: inUse}}, {returnOriginal: false});
         }
         catch(err:any){
@@ -123,5 +149,9 @@ export class GroupService{
         catch(err){
             throw new Error(err.message);
         }
+    }
+
+    async moveandDeleteProperty(){
+
     }
 }

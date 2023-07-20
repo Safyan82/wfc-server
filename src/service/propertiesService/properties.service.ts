@@ -27,6 +27,15 @@ export class PropertiesService{
         }
     }
 
+    async updatePropertiesByGroupId(groupId, groupName){
+        try{
+            await PropertiesModal.updateMany({groupId},{groupName})
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+
     
     async updateProperties(input:PropertiesInput){
         try{
@@ -132,7 +141,7 @@ export class PropertiesService{
             const { id:_id, } = input
             const {groupId} = await this.getPropertyById(_id);
             const groupService = new GroupService();
-            await groupService.updateNumberOfPropertiesOnDelete(groupId);
+            await groupService.updateNumberOfArchivePropertiesOnDelete(groupId);
             await PropertiesModal.updateOne({ _id },{ isDelete: true, });
             return {
                 message: 'Property archived successfully',
@@ -280,15 +289,33 @@ export class PropertiesService{
         ]);
     }
 
-    async deletePropertiestesById(groupId){
+    async updatePropertiesGroup(newGroupId, prevGroupId, newGroupName){
         try{
-            const groupService = new GroupService();
-            await groupService.updateNumberOfPropertiesOnDelete(groupId);
+            const properties = await this.getPropertyByGroupId(prevGroupId);
+            const propIds = (properties).map((property)=>property._id);
+            for(let i=0;i<propIds.length;i++){
+                await PropertiesModal.updateOne({_id:propIds[i]},{
+                    groupId: newGroupId,
+                    groupName: newGroupName
+                });
+            }
+        }catch(err){
+            throw new Error(err.message)
+        }
+    }
 
-            await PropertiesModal.updateMany({groupId},{
-                $set: {isDelete: true}
-            });
-            return true;
+    async bulkDeleteProperties({properties}){
+        try{
+            const propertyIds = properties.map((property)=>property.key);
+            const groupIds = properties.map((property)=>property.groupId);
+            const groupService = new GroupService();
+
+            for(let i=0;i<propertyIds.length;i++){
+                await groupService.updateNumberOfArchivePropertiesOnDelete(groupIds[i])
+                await PropertiesModal.updateOne({_id: propertyIds[i]}, {$set:{isDelete:true}});
+            }
+            
+            return {success:1,message:"Properties are deleted successfully"};
         }
         catch(err){
             return false;
@@ -350,15 +377,17 @@ export class PropertiesService{
     async moveGroup({properties, groupId, groupName}){
         const _ids = properties.map((property)=>property.key);
         const groupIds = properties.map((property)=>property.groupId);
-        await PropertiesModal.updateMany(
-            { _id: { $in: _ids } },
-            { $set: { groupId, groupName } }
-        );
+        // await PropertiesModal.updateMany(
+        //     { _ids },
+        //     {  groupId, groupName  }
+        // );
         const groupService = new GroupService();
 
         // update the prev group by removing property from them
         for(let i=0;i<properties.length;i++){
             
+            await PropertiesModal.updateOne({_id:_ids[i]}, {groupId, groupName});
+
             const group = await GroupModal.findOne({_id: properties[i].groupId});
             // Subtract 1 from the numberOfProperties field
             const updatedNumberOfProperties = group.properties - 1;
