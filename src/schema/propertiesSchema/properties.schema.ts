@@ -102,6 +102,17 @@ export class GenericPropertyResponse{
     success: boolean
 }
 
+@ObjectType()
+export class GenericProperty{
+    @Field(()=>GraphQLJSON)
+    @Prop()
+    data: any
+
+    @Field(()=>Boolean)
+    @Prop()
+    success: boolean
+}
+
 
 @InputType()
 export class PropertyWithFilterInput{

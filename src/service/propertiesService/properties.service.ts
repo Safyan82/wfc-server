@@ -2,18 +2,21 @@ import dayjs from "dayjs";
 import { PropertiesInput, PropertiesModal } from "../../schema/propertiesSchema/properties.schema";
 import { GroupService } from "../groupService/group.service";
 import { GroupModal } from "../../schema/groupSchema/group.schema";
+import { BranchObjectService } from "../branchObjectService/branchObject.service";
 
 export class PropertiesService{
     
     async createProperties(input:PropertiesInput){
         try{
             const groupService = new GroupService();
+            const branchObjectService = new BranchObjectService();
 
-            await PropertiesModal.create({...input, 
+            const generatedPropert = await PropertiesModal.create({...input, 
                 isDelete: 0,
                 isArchive:0, useIn:0 ,createdAt: dayjs()});
             
             await groupService.updateNumberOfProperties(input.groupId);
+            await branchObjectService.generateMandatoryObject(generatedPropert?._id);
             return {
                 message: "Property added successfully",
                 success: 1,
@@ -24,6 +27,31 @@ export class PropertiesService{
                 message: "An Error encountered while adding property",
                 success: 0,
             }
+        }
+    }
+
+    async getPropertiesByGroup(){
+        const data = await PropertiesModal.aggregate([
+            
+            {
+                
+                $match: {
+                    $and: [
+                        {isArchive: { $eq: false }},
+                        {isDelete: {$eq: false}},
+                    ]
+                }
+            },
+            {
+              $group: {
+                _id: "$groupName", // Replace "groupingField" with the field you want to group by
+                properties: { $push: "$$ROOT" }
+                }
+            },
+        ]);
+        return {
+            success: true,
+            data
         }
     }
 

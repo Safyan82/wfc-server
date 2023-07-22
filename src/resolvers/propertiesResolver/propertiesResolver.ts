@@ -1,6 +1,6 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { PropertiesService } from "../../service/propertiesService/properties.service";
-import { ArchivePropertyInput, BulkPropertiesArchive, BulkPropertiesDelete, GenericPropertyResponse, MoveGroupInput, Properties, PropertiesInput, PropertyWithFilterInput } from "../../schema/propertiesSchema/properties.schema";
+import { ArchivePropertyInput, BulkPropertiesArchive, BulkPropertiesDelete, GenericProperty, GenericPropertyResponse, MoveGroupInput, Properties, PropertiesInput, PropertyWithFilterInput } from "../../schema/propertiesSchema/properties.schema";
 
 @Resolver()
 export class PropertiesResolver{
@@ -86,5 +86,10 @@ export class PropertiesResolver{
     @Mutation(()=> GenericPropertyResponse)
     bulkDeleteProperties(@Arg('input') input: BulkPropertiesDelete){
         return this.propertiesService.bulkDeleteProperties(input)
+    }
+
+    @Query(()=> GenericProperty)
+    getPropertyByGroup(){
+        return this.propertiesService.getPropertiesByGroup()
     }
 }
