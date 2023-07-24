@@ -2,12 +2,12 @@ import dayjs from "dayjs";
 import { branchObjectModal } from "../../schema/branchObjectSchema/branchObject.schema";
 
 export class BranchObjectService{
-    async generateMandatoryObject(propertyId){
+    async generateMandatoryObject(propertyId, isReadOnly){
         try{
             await branchObjectModal.create({
                 propertyId,
                 isMandatory: 1,
-                isReadOnly: 1,
+                isReadOnly: isReadOnly? isReadOnly: false,
                 date: dayjs(),
             });
         }catch(err){
@@ -82,7 +82,7 @@ export class BranchObjectService{
         }
     }
 
-    async deleteBranchObjectInput({properties}){
+    async deleteBranchObject({properties}){
         try{
 
             await branchObjectModal.deleteMany({propertyId: { $in: properties}});

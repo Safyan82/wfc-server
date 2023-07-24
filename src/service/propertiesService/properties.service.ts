@@ -16,7 +16,7 @@ export class PropertiesService{
                 isArchive:0, useIn:0 ,createdAt: dayjs()});
             
             await groupService.updateNumberOfProperties(input.groupId);
-            await branchObjectService.generateMandatoryObject(generatedPropert?._id);
+            await branchObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
             return {
                 message: "Property added successfully",
                 success: 1,
@@ -169,8 +169,10 @@ export class PropertiesService{
             const { id:_id, } = input
             const {groupId} = await this.getPropertyById(_id);
             const groupService = new GroupService();
+            const branchObjectService = new BranchObjectService();
             await groupService.updateNumberOfArchivePropertiesOnDelete(groupId);
             await PropertiesModal.updateOne({ _id },{ isDelete: true, });
+            await branchObjectService.deleteBranchObject({properties:[_id]});
             return {
                 message: 'Property archived successfully',
                 success: 1,

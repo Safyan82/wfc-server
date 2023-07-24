@@ -20,6 +20,6 @@ export class BranchObjectResolver{
 
     @Mutation (()=> GenericBranchObjectTypeResponse)
     deleteBranchObject(@Arg('input', {validate: true}) input: DeleteBranchObjectInput){
-        return this.branchObjectService.deleteBranchObjectInput(input)
+        return this.branchObjectService.deleteBranchObject(input)
     }
 }
