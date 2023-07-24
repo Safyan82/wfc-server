@@ -81,4 +81,18 @@ export class BranchObjectService{
             throw new Error(err.message);
         }
     }
+
+    async deleteBranchObjectInput({properties}){
+        try{
+
+            await branchObjectModal.deleteMany({propertyId: { $in: properties}});
+
+            return {
+                 response: properties
+            }
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
 };

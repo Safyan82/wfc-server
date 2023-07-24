@@ -34,6 +34,18 @@ export class branchObjectInput{
     isMandatory: boolean
 }
 
+@InputType()
+class Ids {
+    @Field(()=>ID)
+    id: ObjectId
+}
+
+@InputType()
+export class DeleteBranchObjectInput{
+    @Field(()=>GraphQLJSON)
+    properties: [Ids]
+}
+
 
 @InputType()
 export class BulkBranchObjectInput {
