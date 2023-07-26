@@ -69,12 +69,18 @@ export class PropertiesService{
     
     async updateProperties(input:PropertiesInput){
         try{
-            const groupService = new GroupService();
+            // const groupService = new GroupService();
 
             await PropertiesModal.updateOne({_id:input.id},{...input, 
                updatedAt: dayjs()});
             
-            await groupService.updateNumberOfProperties(input.groupId);
+            // await groupService.updateNumberOfProperties(input.groupId);
+
+            // if(input?.rules?.ownedby){
+            const branchObjectService = new BranchObjectService();
+            branchObjectService.generateMandatoryObject(input.id, input?.rules?.ownedby)
+            // }
+            
             return {
                 message: "Property updated successfully",
                 success: 1,

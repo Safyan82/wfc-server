@@ -4,12 +4,18 @@ import { branchObjectModal } from "../../schema/branchObjectSchema/branchObject.
 export class BranchObjectService{
     async generateMandatoryObject(propertyId, isReadOnly){
         try{
-            await branchObjectModal.create({
-                propertyId,
-                isMandatory: 1,
-                isReadOnly: isReadOnly? isReadOnly: false,
-                date: dayjs(),
-            });
+            const isExist  = await branchObjectModal.findOne({propertyId: propertyId});
+            if(isExist){
+                await branchObjectModal.updateOne({propertyId},{isReadOnly})
+            }else{
+
+                await branchObjectModal.create({
+                    propertyId,
+                    isMandatory: 1,
+                    isReadOnly: isReadOnly? isReadOnly: false,
+                    date: dayjs(),
+                });
+            }
         }catch(err){
             throw new Error(err.message);
         }
