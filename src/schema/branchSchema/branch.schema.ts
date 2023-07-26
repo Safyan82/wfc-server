@@ -10,11 +10,11 @@ export class Branch{
 
     @Field(()=>String)
     @prop()
-    branchName:string;
+    branchname:string;
 
     @Field(()=>String,{nullable:true})
     @prop()
-    postCode:string;
+    postcode:string;
 
     @Field(()=>GraphQLJSON)
     @prop()
@@ -28,6 +28,17 @@ export class Branches{
     branches:Branch[]
 }
 
+@ObjectType()
+export class BranchGenericResponse{
+    @Field(()=>Boolean)
+    success:Boolean
+
+    @Field(()=>String)
+    message:string
+
+    @Field(()=>GraphQLJSON)
+    response: any
+}
 
 @InputType()
 export class createBranchInput{
@@ -36,10 +47,10 @@ export class createBranchInput{
         message: "Please enter meaningfull branch name",
     })
     @Field(()=>String)
-    branchName:String
+    branchname:String
 
     @Field(()=>String)
-    postCode:String
+    postcode:String
 
     @Field(()=>GraphQLJSON,{nullable:true})
     metadata:any
