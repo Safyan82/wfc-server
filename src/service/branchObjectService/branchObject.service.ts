@@ -9,7 +9,11 @@ export class BranchObjectService{
             if(isExist){
                 await branchObjectModal.updateOne({propertyId},{isReadOnly})
             }
-
+            else{
+                if(isReadOnly==true){
+                    this.generateMandatoryObject(propertyId, true);
+                }
+            }
         }
         catch(err){
             throw new Error(err.message);
