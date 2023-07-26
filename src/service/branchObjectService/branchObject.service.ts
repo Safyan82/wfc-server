@@ -2,6 +2,19 @@ import dayjs from "dayjs";
 import { branchObjectModal } from "../../schema/branchObjectSchema/branchObject.schema";
 
 export class BranchObjectService{
+    async updateMandatoryObject(propertyId, isReadOnly){
+        try{
+            
+            const isExist  = await branchObjectModal.findOne({propertyId: propertyId});
+            if(isExist){
+                await branchObjectModal.updateOne({propertyId},{isReadOnly})
+            }
+
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
     async generateMandatoryObject(propertyId, isReadOnly){
         try{
             const isExist  = await branchObjectModal.findOne({propertyId: propertyId});
@@ -55,7 +68,7 @@ export class BranchObjectService{
 
     async branchObject(){
         try{
-            const branchObject = await branchObjectModal.aggregate([
+            const branchObjectData = await branchObjectModal.aggregate([
                 {
                   $lookup: {
                     from: "properties",
@@ -79,6 +92,9 @@ export class BranchObjectService{
                   }
                 }
             ]);
+            const branchObject = (branchObjectData?.filter((branch)=>
+                branch?.propertyDetail?.rules.propertyVisibility))
+            
             return {
                 response: branchObject
             }

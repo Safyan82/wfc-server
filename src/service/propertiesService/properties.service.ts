@@ -33,7 +33,7 @@ export class PropertiesService{
     }
 
     async getPropertiesByGroup(){
-        const data = await PropertiesModal.aggregate([
+        const groups = await PropertiesModal.aggregate([
             
             {
                 
@@ -51,10 +51,20 @@ export class PropertiesService{
                 }
             },
         ]);
+
+        const data = groups?.map((group) => {
+            const prop = group.properties?.filter((property)=>(property.rules.propertyVisibility));
+            return{
+                ...group,
+                properties: [...prop]
+            }
+        });
+
         return {
             success: true,
             data
-        }
+        };
+        
     }
 
     async updatePropertiesByGroupId(groupId, groupName){
@@ -78,7 +88,7 @@ export class PropertiesService{
 
             // if(input?.rules?.ownedby){
             const branchObjectService = new BranchObjectService();
-            branchObjectService.generateMandatoryObject(input.id, input?.rules?.ownedby)
+            branchObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
             // }
             
             return {
