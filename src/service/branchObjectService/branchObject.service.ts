@@ -93,14 +93,15 @@ export class BranchObjectService{
                     "propertyDetail.label": 1,
                     "propertyDetail.rules": 1,
                     "propertyDetail.fieldType": 1,
+                    "propertyDetail.options": 1,
                   }
                 }
             ]);
-            const branchObject = (branchObjectData?.filter((branch)=>
-                branch?.propertyDetail?.rules.propertyVisibility))
+            // const branchObject = (branchObjectData?.filter((branch)=>
+            //     branch?.propertyDetail?.rules.propertyVisibility))
             
             return {
-                response: branchObject
+                response: branchObjectData
             }
         }
         catch(err){

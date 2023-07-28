@@ -52,17 +52,17 @@ export class PropertiesService{
             },
         ]);
 
-        const data = groups?.map((group) => {
-            const prop = group.properties?.filter((property)=>(property.rules.propertyVisibility));
-            return{
-                ...group,
-                properties: [...prop]
-            }
-        });
+        // const data = groups?.map((group) => {
+        //     const prop = group.properties?.filter((property)=>(property.rules.propertyVisibility));
+        //     return{
+        //         ...group,
+        //         properties: [...prop]
+        //     }
+        // });
 
         return {
             success: true,
-            data
+            data: groups,
         };
         
     }
