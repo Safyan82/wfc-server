@@ -484,4 +484,13 @@ export class PropertiesService{
             throw new Error(err.message);
         }
     }
+
+    async updatePropertyInUse(propertyId, useIn){
+        try{
+            await PropertiesModal.updateOne({_id:propertyId},{$set:{useIn}})
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
 }

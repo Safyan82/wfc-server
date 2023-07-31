@@ -21,7 +21,12 @@ export class BranchObject{
     isReadOnly: boolean
 
     @Field(()=> String)
+    @Prop()
     date: string
+
+    @Field(()=> Number)
+    @Prop()
+    order: number
 }
 
 
@@ -29,9 +34,12 @@ export class BranchObject{
 export class branchObjectInput{
     @Field(()=>ID)
     propertyId: ObjectId
-
-    @Field(()=>Boolean)
+    
+    @Field(()=>Boolean, {nullable:true})
     isMandatory: boolean
+
+    @Field(()=>Number, {nullable: true})
+    order: number
 }
 
 @InputType()

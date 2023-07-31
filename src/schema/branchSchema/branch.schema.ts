@@ -16,7 +16,7 @@ export class Branch{
     @prop()
     postcode:string;
 
-    @Field(()=>GraphQLJSON)
+    @Field(()=>GraphQLJSON,{nullable:true})
     @prop()
     metadata:any;
 

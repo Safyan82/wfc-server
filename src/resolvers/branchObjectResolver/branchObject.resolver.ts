@@ -18,6 +18,11 @@ export class BranchObjectResolver{
         return this.branchObjectService.createBranchObject(input);
     }
 
+    @Mutation(()=> GenericBranchObjectTypeResponse)
+    updateBranchObjectOrder(@Arg('input', {validate: true}) input: BulkBranchObjectInput){
+        return this.branchObjectService.updateBranchObjectOrder(input);
+    }
+
     @Mutation (()=> GenericBranchObjectTypeResponse)
     deleteBranchObject(@Arg('input', {validate: true}) input: DeleteBranchObjectInput){
         return this.branchObjectService.deleteBranchObject(input)
