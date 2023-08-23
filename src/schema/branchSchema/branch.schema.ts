@@ -1,7 +1,8 @@
 import { Field, InputType, ObjectType } from "type-graphql";
 import GraphQLJSON from 'graphql-type-json';
-import { getModelForClass, prop } from "@typegoose/typegoose";
+import { Prop, getModelForClass, prop } from "@typegoose/typegoose";
 import { MinLength } from "class-validator";
+import { Date } from "mongoose";
 
 @ObjectType()
 export class Branch{
@@ -19,6 +20,14 @@ export class Branch{
     @Field(()=>GraphQLJSON,{nullable:true})
     @prop()
     metadata:any;
+
+    @Field(()=>String)
+    @Prop()
+    createdDate: string
+
+    @Field(()=>String)
+    @Prop()
+    updatedDate: string
 
 }
 
@@ -56,5 +65,11 @@ export class createBranchInput{
     metadata:any
 }
 
+
+@InputType()
+export class BranchFilter{
+    @Field(()=>GraphQLJSON, {nullable:true})
+    filters: any
+}
 
 export const BranchModal = getModelForClass(Branch);

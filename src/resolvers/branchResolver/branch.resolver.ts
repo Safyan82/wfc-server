@@ -1,5 +1,5 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { Branch, BranchGenericResponse, Branches, createBranchInput } from "../../schema/branchSchema/branch.schema";
+import { Branch, BranchFilter, BranchGenericResponse, Branches, createBranchInput } from "../../schema/branchSchema/branch.schema";
 import BranchService from "../../service/branchService/branch.service";
 
 @Resolver()
@@ -15,9 +15,11 @@ export default class BranchResolver {
 
 
     @Query(()=>[Branch])
-    branches(){
-        return this.branchService.branches()
+    branches(@Arg('input', {validate: true}) input: BranchFilter){
+        // console.log(input);
+        return this.branchService.branches(input)
     }
+
 
     
 

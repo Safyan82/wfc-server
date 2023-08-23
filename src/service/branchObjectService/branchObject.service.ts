@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { branchObjectModal } from "../../schema/branchObjectSchema/branchObject.schema";
+import { BranchObject, branchObjectModal } from "../../schema/branchObjectSchema/branchObject.schema";
 import { PropertiesService } from "../propertiesService/properties.service";
 
 export class BranchObjectService{
@@ -160,6 +160,16 @@ export class BranchObjectService{
             return {
                  response: properties
             }
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+    async getSinglePropFromBranchObjectSchema(id){
+        try{
+            const {isMandatory} = await branchObjectModal.findById(id);
+            return isMandatory;
         }
         catch(err){
             throw new Error(err.message);
