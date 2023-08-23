@@ -55,7 +55,7 @@ export default class BranchService{
                             if(propName=="branchname" || propName==="postcode"){
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
                                     return {
-                                        [propName] : {$regex: value, $options: "i"},
+                                        [propName] : {$regex: value.toLowerCase(), $options: "i"},
                                     }
                                 });
     
@@ -67,7 +67,7 @@ export default class BranchService{
                             }else{
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
                                     return {
-                                        [`metadata.${propName}`] : {$regex: value, $options: "i"},
+                                        [`metadata.${propName}`] : {$regex: value.toLowerCase(), $options: "i"},
                                     }
                                 });
     
@@ -84,7 +84,7 @@ export default class BranchService{
 
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
                                     return {
-                                        [propName] : { $not : {$regex: value, $options: "i"}},
+                                        [propName] : { $not : {$regex: value.toLowerCase(), $options: "i"}},
                                     }
                                 });
                                 matchStage.$match.$and.push(
@@ -96,7 +96,7 @@ export default class BranchService{
 
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
                                     return {
-                                        [`metadata.${propName}`] : { $not : {$regex: value, $options: "i"}},
+                                        [`metadata.${propName}`] : { $not : {$regex: value.toLowerCase(), $options: "i"}},
                                     }
                                 });
                                 matchStage.$match.$and.push(
