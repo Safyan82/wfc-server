@@ -1,5 +1,6 @@
 import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolver";
 import BranchResolver from "./branchResolver/branch.resolver";
+import BranchViewResolver from "./branchViewResolver/branchView.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
@@ -12,5 +13,6 @@ export const resolvers = [
     BranchResolver,
     GroupResolver,
     PropertiesResolver,
-    BranchObjectResolver
+    BranchObjectResolver,
+    BranchViewResolver,
 ] as const
