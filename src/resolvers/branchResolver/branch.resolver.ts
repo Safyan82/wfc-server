@@ -20,6 +20,10 @@ export default class BranchResolver {
         return this.branchService.branches(input)
     }
 
+    @Query(()=>Branch)
+    branch(@Arg('_id') _id: String){
+        return this.branchService.branch(_id)
+    }
 
     
 

@@ -200,4 +200,13 @@ export default class BranchService{
             throw new Error(err);
         }
     }
-}
+
+    async branch(_id){
+        try{
+            return await BranchModal.findById(_id);
+        }
+        catch(err){
+            throw new Error(err);
+        }
+    }
+}   
