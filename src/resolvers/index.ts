@@ -1,3 +1,4 @@
+import { BranchDetailViewResolver } from "./branchDetailViewResolver/branchDetailView.Resolver";
 import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolver";
 import BranchResolver from "./branchResolver/branch.resolver";
 import BranchViewResolver from "./branchViewResolver/branchView.resolver";
@@ -17,4 +18,5 @@ export const resolvers = [
     BranchObjectResolver,
     BranchViewResolver,
     NoteResolver,
+    BranchDetailViewResolver,
 ] as const
