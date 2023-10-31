@@ -3,6 +3,7 @@ import { BranchObject, branchObjectModal } from "../../schema/branchObjectSchema
 import { PropertiesService } from "../propertiesService/properties.service";
 
 export class BranchObjectService{
+    
     async updateMandatoryObject(propertyId, isReadOnly){
         try{
             
@@ -128,6 +129,8 @@ export class BranchObjectService{
                     "propertyDetail.fieldType": 1,
                     "propertyDetail.options": 1,
                     "propertyDetail.isArchive": 1,
+                    "propertyDetail.groupId": 1,
+                    "propertyDetail.groupName": 1,
                   }
                 }
             ]);
