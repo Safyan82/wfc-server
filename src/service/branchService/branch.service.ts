@@ -201,6 +201,33 @@ export default class BranchService{
         }
     }
 
+    async updateBranch(input){
+        try{
+            const {_id, ...rest} = input;
+            
+            let data = {$set:{}}
+            rest?.properties?.map((prop)=>{
+                if(prop.metadata){
+                   data.$set[`metadata.${prop.name}`]=prop.value;
+                }else{
+                    data.$set[prop.name] = prop.value;
+                }
+            });
+            await BranchModal.updateOne({_id}, data);
+            return {
+                success: 1,
+                message: "Branch updated successfully",
+                response: data,
+            }
+        }
+        catch(err){
+            return{
+                success: 0,
+                message: err.message,
+            }
+        }
+    }
+
     async branch(_id){
         try{
             return await BranchModal.findById(_id);

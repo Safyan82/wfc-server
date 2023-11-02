@@ -45,7 +45,7 @@ export class BranchGenericResponse{
     @Field(()=>String)
     message:string
 
-    @Field(()=>GraphQLJSON)
+    @Field(()=>GraphQLJSON, {nullable: true})
     response: any
 }
 
@@ -70,6 +70,15 @@ export class createBranchInput{
 export class BranchFilter{
     @Field(()=>GraphQLJSON, {nullable:true})
     filters: any
+}
+
+@InputType()
+export class BranchUpdateInput{
+    @Field(()=>GraphQLJSON)
+    properties: any
+
+    @Field(()=>String)
+    _id: string
 }
 
 export const BranchModal = getModelForClass(Branch);
