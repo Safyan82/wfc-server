@@ -10,6 +10,10 @@ export class BranchPropertyHistory {
 
     @Field(()=>ID)
     @Prop()
+    branchId: ObjectId
+
+    @Field(()=>ID)
+    @Prop()
     propertyId: ObjectId
 
     @Field(()=>String)
@@ -41,6 +45,9 @@ export class BranchPropertyResponse {
 
 @InputType()
 export class BranchPropertyHistoryInput{
+    @Field(()=>ID)
+    branchId: ObjectId
+
     @Field(()=>ID)
     propertyId: ObjectId
     

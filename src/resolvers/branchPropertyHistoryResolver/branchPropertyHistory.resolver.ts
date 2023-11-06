@@ -13,6 +13,6 @@ export class BranchPropertyHistoryResolver{
 
     @Query(()=>BranchPropertyResponse)
     getBranchPropHistory(@Arg('input', {validate: true}) input: BranchPropertyHistoryInput){
-        return this.branchPropertyHistoryService.getBranchHistory(input.propertyId);
+        return this.branchPropertyHistoryService.getBranchHistory(input.propertyId, input?.branchId);
     }
 }
