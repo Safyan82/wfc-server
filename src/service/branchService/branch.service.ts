@@ -209,15 +209,21 @@ export default class BranchService{
             let data = {$set:{}};
             const branchPropertyHistory = new BranchPropertyHistoryService();
 
+            const branchData = await this.branch(_id);
             
-            Promise.all(rest?.properties?.map(async(prop)=>{
+            rest?.properties?.map(async(prop)=>{
                 if(prop.metadata){
                     data.$set[`metadata.${prop.name}`]=prop.value;
+                    if(Object.keys(branchData.metadata).includes(prop.name)){
+                        await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData.metadata[prop?.name], _id);
+                    }
                 }else{
                     data.$set[prop.name] = prop.value;
+                    if(Object.keys(branchData).includes(prop.name)){
+                        await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData[prop?.name], _id);
+                    }
                 }
-                await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop?.value);
-            }));
+            });
             await BranchModal.updateOne({_id}, data);
             return {
                 success: 1,
@@ -235,7 +241,12 @@ export default class BranchService{
 
     async branch(_id){
         try{
-            return await BranchModal.findById(_id);
+            const branch =  await BranchModal.findById(_id);
+            return {
+                branchname: branch?.branchname,
+                postcode: branch?.postcode,
+                metadata: branch?.metadata,
+            }
         }
         catch(err){
             throw new Error(err);

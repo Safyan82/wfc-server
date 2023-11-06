@@ -3,9 +3,9 @@ import { BranchPropertyHistoryModal } from "../../schema/branchPropertyHistorySc
 import mongoose from "mongoose";
 
 export class BranchPropertyHistoryService{
-    async createBranchPropertyHistoryRecord(propertyId, value){
+    async createBranchPropertyHistoryRecord(propertyId, value, branchId){
         try{
-            await BranchPropertyHistoryModal.create({propertyId, value, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+            await BranchPropertyHistoryModal.create({branchId, propertyId, value, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
             return true;
         }
         catch(err){
@@ -13,18 +13,19 @@ export class BranchPropertyHistoryService{
         }
     }
 
-    async getBranchHistory(propertyId){
+    async getBranchHistory(propertyId, branchId){
         try{
             
             const branchObjectData = await BranchPropertyHistoryModal.aggregate([
                 {
                     "$match": {
-                        // alert
-                        // here i am passing ObjectId from the input I don't know at
-                        // the moment why i have to convert type here as well
-                        // otherwise it's not working.
-                        // ----- Look into this soon ---------
-                      "propertyId": new mongoose.Types.ObjectId(propertyId)
+                        $and:[
+                          {
+                            "propertyId": new mongoose.Types.ObjectId(propertyId),
+                            "branchId": new mongoose.Types.ObjectId(branchId)
+
+                          }
+                        ]
                     }
                 },
                 {
