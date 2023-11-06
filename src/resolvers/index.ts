@@ -1,5 +1,6 @@
 import { BranchDetailViewResolver } from "./branchDetailViewResolver/branchDetailView.Resolver";
 import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolver";
+import { BranchPropertyHistoryResolver } from "./branchPropertyHistoryResolver/branchPropertyHistory.resolver";
 import BranchResolver from "./branchResolver/branch.resolver";
 import BranchViewResolver from "./branchViewResolver/branchView.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
@@ -19,4 +20,5 @@ export const resolvers = [
     BranchViewResolver,
     NoteResolver,
     BranchDetailViewResolver,
+    BranchPropertyHistoryResolver,
 ] as const

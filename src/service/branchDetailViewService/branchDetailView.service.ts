@@ -8,13 +8,13 @@ export class BranchDetailViewService{
             const isExist = await BranchDetailViewModal.findById(input?._id);
             if(isExist &&  input?._id){
                 const {createdBy, ...rest} = input;
-                await BranchDetailViewModal.updateOne({_id: input?._id}, {...rest, createdAt: dayjs()});
+                await BranchDetailViewModal.updateOne({_id: input?._id}, {...rest, updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
                 return {
                     success: 1,
                     message: "Your custom view is updated successfully",
                 }
             }else{  
-                await BranchDetailViewModal.create({...input, updatedAt: dayjs()});
+                await BranchDetailViewModal.create({...input, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
                 return {
                     success: 1,
                     message: "Your custom view is added successfully",

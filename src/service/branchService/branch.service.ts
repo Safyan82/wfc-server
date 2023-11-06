@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { BranchModal, createBranchInput } from "../../schema/branchSchema/branch.schema";
+import { BranchPropertyHistoryService } from "../branchPropertyHistoryService/branchPropertyHistory.service";
 
 export default class BranchService{
     async createBranch(input: createBranchInput){
@@ -205,14 +206,18 @@ export default class BranchService{
         try{
             const {_id, ...rest} = input;
             
-            let data = {$set:{}}
-            rest?.properties?.map((prop)=>{
+            let data = {$set:{}};
+            const branchPropertyHistory = new BranchPropertyHistoryService();
+
+            
+            Promise.all(rest?.properties?.map(async(prop)=>{
+                await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop?.value);
                 if(prop.metadata){
                    data.$set[`metadata.${prop.name}`]=prop.value;
                 }else{
                     data.$set[prop.name] = prop.value;
                 }
-            });
+            }));
             await BranchModal.updateOne({_id}, data);
             return {
                 success: 1,
