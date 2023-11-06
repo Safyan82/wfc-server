@@ -211,12 +211,12 @@ export default class BranchService{
 
             
             Promise.all(rest?.properties?.map(async(prop)=>{
-                await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop?.value);
                 if(prop.metadata){
-                   data.$set[`metadata.${prop.name}`]=prop.value;
+                    data.$set[`metadata.${prop.name}`]=prop.value;
                 }else{
                     data.$set[prop.name] = prop.value;
                 }
+                await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop?.value);
             }));
             await BranchModal.updateOne({_id}, data);
             return {

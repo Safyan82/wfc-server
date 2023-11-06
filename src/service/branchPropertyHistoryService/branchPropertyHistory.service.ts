@@ -42,6 +42,8 @@ export class BranchPropertyHistoryService{
                   $project: {
                     _id: 1,
                     propertyId: 1,
+                    value: 1,
+                    createdAt: 1,
                     isReadOnly: 1,
                     isMandatory: 1,
                     order: 1,
