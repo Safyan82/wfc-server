@@ -15,4 +15,9 @@ export class BranchPropertyHistoryResolver{
     getBranchPropHistory(@Arg('input', {validate: true}) input: BranchPropertyHistoryInput){
         return this.branchPropertyHistoryService.getBranchHistory(input.propertyId, input?.branchId);
     }
+
+    @Query(()=>BranchPropertyResponse)
+    getBranchAllPropHistory(@Arg('branchId', {validate: true}) branchId: String){
+        return this.branchPropertyHistoryService.getBranchAllPropHistory(branchId)
+    }
 }
