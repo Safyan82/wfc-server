@@ -20,6 +20,10 @@ export class Group{
 
     @Field(()=>String)
     @Prop()
+    objectType: string
+
+    @Field(()=>String)
+    @Prop()
     createdBy: String
 
     @Field(()=>String)
@@ -58,6 +62,9 @@ export class GroupInput{
 
     @Field(()=>String,{nullable: true})
     name?: string
+
+    @Field(()=>String,{nullable: true})
+    objectType?: string
 
     @Field(()=>String, {nullable: true})
     createdBy?: string

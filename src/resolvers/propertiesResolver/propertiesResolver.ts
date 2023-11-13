@@ -43,8 +43,8 @@ export class PropertiesResolver{
 
 
     @Query(()=>[Properties])
-    getArchiveProperties(){
-        return this.propertiesService.archivePropertyList();
+    getArchiveProperties(@Arg('objectType') objectType:String){
+        return this.propertiesService.archivePropertyList(objectType);
     }
 
     @Query(()=>Properties)
@@ -64,8 +64,8 @@ export class PropertiesResolver{
     }
 
     @Query(()=>[Properties])
-    archivePropertyFilter(@Arg('startDate') startDate:string, @Arg('endDate') endDate:string){
-        return this.propertiesService.archivePropertyFilter(startDate, endDate);
+    archivePropertyFilter(@Arg('startDate') startDate:string, @Arg('endDate') endDate:string, @Arg('objectType') objectType:string){
+        return this.propertiesService.archivePropertyFilter(startDate, endDate, objectType);
     }
 
     @Mutation(()=> GenericPropertyResponse)
@@ -90,6 +90,6 @@ export class PropertiesResolver{
 
     @Query(()=> GenericProperty)
     getPropertyByGroup(){
-        return this.propertiesService.getPropertiesByGroup()
+        return this.propertiesService.getBranchPropertyByGroup()
     }
 }

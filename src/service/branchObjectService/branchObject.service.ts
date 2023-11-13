@@ -106,6 +106,7 @@ export class BranchObjectService{
     async branchObject(){
         try{
             const branchObjectData = await branchObjectModal.aggregate([
+                
                 {
                   $lookup: {
                     from: "properties",

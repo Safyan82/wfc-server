@@ -126,6 +126,9 @@ export class ArchivePropertyInput{
     @Field(()=>String)
     id: string
 
+    @Field(()=>String, {nullable: true})
+    objectType: string
+
     // @Field(()=>Boolean)
     // isArchive: boolean
 }

@@ -3,6 +3,8 @@ import { PropertiesInput, PropertiesModal } from "../../schema/propertiesSchema/
 import { GroupService } from "../groupService/group.service";
 import { GroupModal } from "../../schema/groupSchema/group.schema";
 import { BranchObjectService } from "../branchObjectService/branchObject.service";
+import { EmployeeObjectService } from "../employeeObjectService/employeeObject.service";
+import { objectTypeList } from "../../utils/objectype";
 
 export class PropertiesService{
     
@@ -10,6 +12,7 @@ export class PropertiesService{
         try{
             const groupService = new GroupService();
             const branchObjectService = new BranchObjectService();
+            const employeeObjectService = new EmployeeObjectService();
 
             const generatedPropert = await PropertiesModal.create({...input, 
                 isDelete: 0,
@@ -17,7 +20,13 @@ export class PropertiesService{
             
             await groupService.updateNumberOfProperties(input.groupId);
             if(input?.rules?.ownedby){
-                await branchObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
+                if(input?.objectType===objectTypeList.Branch){
+
+                    await branchObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
+                }
+                else if(input?.objectType===objectTypeList.Employee){
+                    await employeeObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
+                }
             }
             return {
                 message: "Property added successfully",
@@ -32,7 +41,7 @@ export class PropertiesService{
         }
     }
 
-    async getPropertiesByGroup(){
+    async getBranchPropertyByGroup(){
         const groups = await PropertiesModal.aggregate([
             
             {
@@ -41,6 +50,7 @@ export class PropertiesService{
                     $and: [
                         {isArchive: { $eq: false }},
                         {isDelete: {$eq: false}},
+                        {objectType: 'Branch'},
                     ]
                 }
             },
@@ -88,7 +98,13 @@ export class PropertiesService{
 
             // if(input?.rules?.ownedby){
             const branchObjectService = new BranchObjectService();
-            branchObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
+            const employeeObjectService = new EmployeeObjectService();
+            if(input?.objectType===objectTypeList.Branch){
+                await branchObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
+            }
+            else if(input?.objectType===objectTypeList.Employee){
+                await employeeObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
+            }
             // }
             
             return {
@@ -184,13 +200,22 @@ export class PropertiesService{
     
     async deleteProperty(input){
         try{
-            const { id:_id, } = input
+            const { id:_id, objectType} = input
             const {groupId} = await this.getPropertyById(_id);
+            
             const groupService = new GroupService();
             const branchObjectService = new BranchObjectService();
+            const employeeObjectService = new EmployeeObjectService();
+
             await groupService.updateNumberOfArchivePropertiesOnDelete(groupId);
             await PropertiesModal.updateOne({ _id },{ isDelete: true, });
-            await branchObjectService.deleteBranchObject({properties:[_id]});
+            if(objectType==objectTypeList.Branch){
+
+                await branchObjectService.deleteBranchObject({properties:[_id]});
+            }
+            else if(objectType == objectTypeList.Employee){
+                await employeeObjectService.deleteEmployeeObject({properties:[_id]})
+            }
             return {
                 message: 'Property archived successfully',
                 success: 1,
@@ -202,7 +227,7 @@ export class PropertiesService{
     }
 
 
-    async archivePropertyList(){
+    async archivePropertyList(objectType){
         try{
             const properties = await PropertiesModal
             .aggregate([
@@ -212,6 +237,7 @@ export class PropertiesService{
                         $and: [
                             {isArchive: { $eq: true }},
                             {isDelete: {$eq: false}},
+                            {objectType: objectType}
                         ]
                     }
                 },
@@ -246,7 +272,7 @@ export class PropertiesService{
         }
     }
 
-    async archivePropertyFilter(startDate, endDate){
+    async archivePropertyFilter(startDate, endDate, objectType){
         try{
             const properties = await PropertiesModal
             .aggregate([
@@ -259,7 +285,8 @@ export class PropertiesService{
                             {archiveTime : {
                                 $gte: startDate.toString(),
                                 $lte: endDate.toString()
-                            }}
+                            }},
+                            {objectType: objectType}
                         ]
                     }
                 },
