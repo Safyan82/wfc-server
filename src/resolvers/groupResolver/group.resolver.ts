@@ -25,8 +25,8 @@ export class GroupResolver{
     }
 
     @Query(()=>[Group])
-    groupList(){
-        return this.groupService.groupList();
+    groupList(@Arg('objectType', {validate: true}) objectType:String){
+        return this.groupService.groupList(objectType);
     }
 
 }

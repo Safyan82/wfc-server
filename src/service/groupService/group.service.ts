@@ -66,16 +66,22 @@ export class GroupService{
         }
     }
 
-    async groupList(){
+    async groupList(objectType){
         try{
             const group = await GroupModal.aggregate([
                 
                 {
                     
                     $match: {
-                        $or: [
-                            {isDeleted: {$eq: false}},
-                            {isDeleted: {$exists: false}},
+                        $and: [
+                            {objectType: objectType},
+
+                            {
+                                $or: [
+                                    {isDeleted: {$eq: false}},
+                                    {isDeleted: {$exists: false}},
+                                ]
+                            }
                         ]
                     }
                 },
