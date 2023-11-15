@@ -3,6 +3,8 @@ import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolv
 import { BranchPropertyHistoryResolver } from "./branchPropertyHistoryResolver/branchPropertyHistory.resolver";
 import BranchResolver from "./branchResolver/branch.resolver";
 import BranchViewResolver from "./branchViewResolver/branchView.resolver";
+import { EmployeeObjectResolver } from "./employeeObjectResolver/employeeObject.resolver";
+import { EmployeeResolver } from "./employeeResolver/employee.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
@@ -21,4 +23,6 @@ export const resolvers = [
     NoteResolver,
     BranchDetailViewResolver,
     BranchPropertyHistoryResolver,
+    EmployeeObjectResolver,
+    EmployeeResolver,
 ] as const
