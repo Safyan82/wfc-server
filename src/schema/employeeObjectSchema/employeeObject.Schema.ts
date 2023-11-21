@@ -50,14 +50,14 @@ class Ids {
 }
 
 @InputType()
-export class DeleteBranchObjectInput{
+export class DeleteEmployeeObjectInput{
     @Field(()=>GraphQLJSON)
     properties: [Ids]
 }
 
 
 @InputType()
-export class BulkBranchObjectInput {
+export class BulkEmployeeObjectInput {
     @Field(()=>[employeeObjectInput])
     fields: [employeeObjectInput]
 }
@@ -66,7 +66,7 @@ export const employeeObjectModal = getModelForClass(EmployeeObject);
 
 
 @ObjectType()
-export class GenericBranchObjectTypeResponse{
+export class GenericEmployeeObjectResponse{
     @Field(()=>GraphQLJSON)
     response:any
 }

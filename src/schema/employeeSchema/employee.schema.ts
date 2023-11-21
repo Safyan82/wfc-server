@@ -1,6 +1,6 @@
-import { Prop } from "@typegoose/typegoose";
+import { Prop, getModelForClass } from "@typegoose/typegoose";
 import GraphQLJSON from "graphql-type-json";
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, InputType, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class Employee{
@@ -9,17 +9,58 @@ export class Employee{
 
     @Field(()=>String)
     @Prop()
-    branchId: string
+    branchid: string
 
     @Field(()=>String)
     @Prop()
-    firstName: string
+    firstname: string
 
     @Field(()=>String)
     @Prop()
-    lastName: string
+    lastname: string
 
     @Field(()=>GraphQLJSON)
     @Prop()
     metadata: any
+    
+    @Field(()=>String)
+    @Prop()
+    createdAt: string
+
+    @Field(()=>String)
+    @Prop()
+    updatedAt: string
 }
+
+@InputType()
+export class EmployeeInput{
+    @Field(()=>String)
+    branchid: string
+    
+    @Field(()=>String)
+    firstname: string
+
+    @Field(()=>String)
+    lastname: string
+
+    @Field(()=>GraphQLJSON)
+    metadata: any
+};
+
+@ObjectType()
+export class EmployeeGenericResponse{
+
+    @Field(()=>String, {nullable: true})
+    message: string
+
+    @Field(()=>GraphQLJSON, {nullable: true})
+    response: any
+};
+
+@InputType()
+export class EmployeeFilter{
+    @Field(()=>GraphQLJSON, {nullable:true})
+    filters: any
+}
+
+export const employeeModal = getModelForClass(Employee);

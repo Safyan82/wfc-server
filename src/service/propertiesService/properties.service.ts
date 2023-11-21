@@ -41,7 +41,7 @@ export class PropertiesService{
         }
     }
 
-    async getBranchPropertyByGroup(){
+    async getBranchPropertyByGroup(objectType){
         const groups = await PropertiesModal.aggregate([
             
             {
@@ -50,7 +50,7 @@ export class PropertiesService{
                     $and: [
                         {isArchive: { $eq: false }},
                         {isDelete: {$eq: false}},
-                        {objectType: 'Branch'},
+                        {objectType: objectType},
                     ]
                 }
             },
@@ -61,15 +61,7 @@ export class PropertiesService{
                 }
             },
         ]);
-
-        // const data = groups?.map((group) => {
-        //     const prop = group.properties?.filter((property)=>(property.rules.propertyVisibility));
-        //     return{
-        //         ...group,
-        //         properties: [...prop]
-        //     }
-        // });
-
+        
         return {
             success: true,
             data: groups,
