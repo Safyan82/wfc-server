@@ -57,4 +57,10 @@ export class EmployeeGenericResponse{
     response: any
 };
 
+@InputType()
+export class EmployeeFilter{
+    @Field(()=>GraphQLJSON, {nullable:true})
+    filters: any
+}
+
 export const employeeModal = getModelForClass(Employee);

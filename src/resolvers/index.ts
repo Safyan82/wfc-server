@@ -5,6 +5,7 @@ import BranchResolver from "./branchResolver/branch.resolver";
 import BranchViewResolver from "./branchViewResolver/branchView.resolver";
 import { EmployeeObjectResolver } from "./employeeObjectResolver/employeeObject.resolver";
 import { EmployeeResolver } from "./employeeResolver/employee.resolver";
+import { EmployeeViewResolver } from "./employeeViewResolver/employeeView.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
@@ -25,4 +26,5 @@ export const resolvers = [
     BranchPropertyHistoryResolver,
     EmployeeObjectResolver,
     EmployeeResolver,
+    EmployeeViewResolver,
 ] as const

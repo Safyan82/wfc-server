@@ -89,7 +89,7 @@ export class PropertiesResolver{
     }
 
     @Query(()=> GenericProperty)
-    getPropertyByGroup(){
-        return this.propertiesService.getBranchPropertyByGroup()
+    getPropertyByGroup(@Arg('objectType', {validate: true}) objectType: String){
+        return this.propertiesService.getBranchPropertyByGroup(objectType)
     }
 }

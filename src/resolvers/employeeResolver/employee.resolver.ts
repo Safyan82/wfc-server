@@ -1,5 +1,5 @@
 import { Arg, Mutation, Resolver, Query } from "type-graphql";
-import { EmployeeGenericResponse, EmployeeInput } from "../../schema/employeeSchema/employee.schema";
+import { EmployeeFilter, EmployeeGenericResponse, EmployeeInput } from "../../schema/employeeSchema/employee.schema";
 import { EmployeeService } from "../../service/employee/employee.service";
 
 @Resolver()
@@ -14,8 +14,8 @@ export class EmployeeResolver{
     }
 
     @Query(()=>EmployeeGenericResponse)
-    getEmployee(){
-        return this.employeeService.getEmployee();
+    getEmployee(@Arg('input', {validate: true}) input: EmployeeFilter){
+        return this.employeeService.getEmployee(input);
     }
 
 }

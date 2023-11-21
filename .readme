@@ -1,0 +1,8 @@
+----branchView /*View ----------------
+*.View the collection to handel the view name filters 
+and 
+the field / properties that we have to render in grid for that particular view
+
+-------- */View Detail -----------
+This collection handel the detailed page of specific properties
+For specific user of specific object in detail page
