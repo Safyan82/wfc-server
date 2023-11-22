@@ -44,6 +44,12 @@ export class employeeObjectInput{
 }
 
 @InputType()
+export class BulkBranchObjectInput {
+    @Field(()=>[employeeObjectInput])
+    fields: [employeeObjectInput]
+}
+
+@InputType()
 class Ids {
     @Field(()=>ID)
     id: ObjectId
