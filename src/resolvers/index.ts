@@ -3,7 +3,9 @@ import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolv
 import { BranchPropertyHistoryResolver } from "./branchPropertyHistoryResolver/branchPropertyHistory.resolver";
 import BranchResolver from "./branchResolver/branch.resolver";
 import BranchViewResolver from "./branchViewResolver/branchView.resolver";
+import { EmployeeDetailViewResolver } from "./employeeDetailViewResolver/employeeDetailView.resolver";
 import { EmployeeObjectResolver } from "./employeeObjectResolver/employeeObject.resolver";
+import { EmployeePropertyHistoryResolver } from "./employeePropertyHistoryResolver/employeePropertyHistory.resolver";
 import { EmployeeResolver } from "./employeeResolver/employee.resolver";
 import { EmployeeViewResolver } from "./employeeViewResolver/employeeView.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
@@ -27,4 +29,6 @@ export const resolvers = [
     EmployeeObjectResolver,
     EmployeeResolver,
     EmployeeViewResolver,
+    EmployeeDetailViewResolver,
+    EmployeePropertyHistoryResolver,
 ] as const

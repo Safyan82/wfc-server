@@ -1,5 +1,7 @@
 import dayjs from "dayjs"
-import { employeeModal } from "../../schema/employeeSchema/employee.schema"
+import { Employee, employeeModal } from "../../schema/employeeSchema/employee.schema"
+import mongoose, { mongo } from "mongoose";
+import { EmployeePropertyHistoryService } from "../employeePropertyHistoryService/employeePropertyHistory.service";
 
 export class EmployeeService {
     async addEmployee(input){
@@ -200,6 +202,74 @@ export class EmployeeService {
                 success: 1,
                 message: "Employee reterived successfully",
             };
+        }
+        catch(err){
+            throw new Error(err);
+        }
+    }
+
+    async singleEmployee(_id){
+        try{
+            const employee = await employeeModal.findOne({_id: new mongoose.Types.ObjectId(_id)});
+            return {
+                response: employee
+            }
+        }
+        catch(err){
+            return {
+                message: err.message,
+            }
+        }
+    }
+
+    async updateEmployee(input){
+        try{
+            const {_id, ...rest} = input;
+            
+            let data = {$set:{updatedAt: dayjs()}};
+            const employeePropertyHistory = new EmployeePropertyHistoryService();
+
+            const employeeData = await this.employee(_id);
+            
+            rest?.properties?.map(async(prop)=>{
+                if(prop.metadata){
+                    data.$set[`metadata.${prop.name}`]=prop.value;
+                    if(Object.keys(employeeData.metadata).includes(prop.name)){
+                        await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData.metadata[prop?.name], _id);
+                    }
+                }else{
+                    data.$set[prop.name] = prop.value;
+                    if(Object.keys(employeeData).includes(prop.name)){
+                        await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData[prop?.name], _id);
+                    }
+                }
+            });
+
+            await employeeModal.updateOne({_id}, data);
+            return {
+                success: 1,
+                message: "employee updated successfully",
+                response: data,
+            }
+        }
+        catch(err){
+            return{
+                success: 0,
+                message: err.message,
+            }
+        }
+    }
+
+    
+    async employee(_id){
+        try{
+            const employee =  await employeeModal.findById(_id);
+            return {
+                firstname: employee?.firstname,
+                lastname: employee?.lastname,
+                branchid: employee?.branchid,
+                metadata: employee?.metadata,
+            }
         }
         catch(err){
             throw new Error(err);

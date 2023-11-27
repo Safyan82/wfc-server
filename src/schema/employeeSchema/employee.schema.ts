@@ -64,3 +64,12 @@ export class EmployeeFilter{
 }
 
 export const employeeModal = getModelForClass(Employee);
+
+@InputType()
+export class EmployeeUpdateInput{
+    @Field(()=>GraphQLJSON)
+    properties: any
+
+    @Field(()=>String)
+    _id: string
+}
