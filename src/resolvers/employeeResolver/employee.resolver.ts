@@ -1,5 +1,5 @@
 import { Arg, Mutation, Resolver, Query } from "type-graphql";
-import { EmployeeFilter, EmployeeGenericResponse, EmployeeInput, EmployeeUpdateInput } from "../../schema/employeeSchema/employee.schema";
+import { BulkEmployeeUpdateInput, EmployeeFilter, EmployeeGenericResponse, EmployeeInput, EmployeeUpdateInput } from "../../schema/employeeSchema/employee.schema";
 import { EmployeeService } from "../../service/employee/employee.service";
 
 @Resolver()
@@ -28,4 +28,8 @@ export class EmployeeResolver{
         return this.employeeService.updateEmployee(input);
     }
 
+    @Mutation(()=>EmployeeGenericResponse)
+    updateBulkEmployee(@Arg('input', {validate:true}) input:BulkEmployeeUpdateInput){
+        return this.employeeService.updateBulkEmployee(input);
+    }
 }

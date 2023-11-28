@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { BranchModal, createBranchInput } from "../../schema/branchSchema/branch.schema";
 import { BranchPropertyHistoryService } from "../branchPropertyHistoryService/branchPropertyHistory.service";
+import mongoose from "mongoose";
 
 export default class BranchService{
     async createBranch(input: createBranchInput){
@@ -250,6 +251,28 @@ export default class BranchService{
         }
         catch(err){
             throw new Error(err);
+        }
+    }
+
+    async updateBulkBranch(input){
+        try{
+            const {_ids, properties} = input;
+            const id = _ids?.map((id)=>(new mongoose.Types.ObjectId(id)));
+            const filter = { _id: { $in: id } };
+            const updateOperation = {
+            $set: { ...properties },
+            };
+            await BranchModal.updateMany(filter, updateOperation);
+            return{
+                success: 1,
+                message: "Bulk update"
+            }
+        }
+        catch(err){
+            return {
+                success: 0,
+                message: err.message
+            }
         }
     }
 }   
