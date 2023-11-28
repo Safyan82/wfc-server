@@ -1,5 +1,6 @@
 import { Prop, getModelForClass } from "@typegoose/typegoose";
 import GraphQLJSON from "graphql-type-json";
+import { ObjectId } from "mongoose";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -7,9 +8,9 @@ export class Employee{
     @Field(()=>ID)
     _id: string
 
-    @Field(()=>String)
+    @Field(()=>ID)
     @Prop()
-    branchid: string
+    branch: ObjectId
 
     @Field(()=>String)
     @Prop()
@@ -35,7 +36,7 @@ export class Employee{
 @InputType()
 export class EmployeeInput{
     @Field(()=>String)
-    branchid: string
+    branch: string
     
     @Field(()=>String)
     firstname: string
@@ -72,4 +73,13 @@ export class EmployeeUpdateInput{
 
     @Field(()=>String)
     _id: string
+}
+
+@InputType()
+export class BulkEmployeeUpdateInput{
+    @Field(()=>GraphQLJSON)
+    properties: any
+
+    @Field(()=>GraphQLJSON)
+    _ids: any
 }

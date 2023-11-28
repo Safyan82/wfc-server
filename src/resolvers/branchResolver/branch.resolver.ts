@@ -1,5 +1,5 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { Branch, BranchFilter, BranchGenericResponse, BranchUpdateInput, Branches, createBranchInput } from "../../schema/branchSchema/branch.schema";
+import { Branch, BranchFilter, BranchGenericResponse, BranchUpdateInput, Branches, BulkBranchUpdateInput, createBranchInput } from "../../schema/branchSchema/branch.schema";
 import BranchService from "../../service/branchService/branch.service";
 
 @Resolver()
@@ -28,6 +28,11 @@ export default class BranchResolver {
     @Mutation(()=>BranchGenericResponse)
     updateBranch(@Arg('input', {validate: true}) input:BranchUpdateInput ){
         return this.branchService.updateBranch(input);
+    }
+
+    @Mutation(()=>BranchGenericResponse)
+    updateBulkBranch(@Arg('input', {validate:true}) input:BulkBranchUpdateInput){
+        return this.branchService.updateBulkBranch(input);
     }
 
 }

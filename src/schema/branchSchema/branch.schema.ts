@@ -49,6 +49,8 @@ export class BranchGenericResponse{
     response: any
 }
 
+
+
 @InputType()
 export class createBranchInput{
 
@@ -79,6 +81,16 @@ export class BranchUpdateInput{
 
     @Field(()=>String)
     _id: string
+}
+
+
+@InputType()
+export class BulkBranchUpdateInput{
+    @Field(()=>GraphQLJSON)
+    properties: any
+
+    @Field(()=>GraphQLJSON)
+    _ids: any
 }
 
 export const BranchModal = getModelForClass(Branch);
