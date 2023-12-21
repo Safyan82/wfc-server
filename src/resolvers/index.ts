@@ -12,7 +12,7 @@ import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
-import UserResolver from "./user.resolver";
+import UserResolver from "./userResolver/user.resolver";
 import { UserRoleResolver } from "./userRoleResolver/userRole.resolver";
 
 
