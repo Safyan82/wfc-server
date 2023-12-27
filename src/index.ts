@@ -1,13 +1,17 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import 'reflect-metadata';
-import { buildSchema } from 'type-graphql';
+import { AuthChecker, buildSchema } from 'type-graphql';
 import cookieParser from 'cookie-parser';
 import { ApolloServer} from 'apollo-server-express';
 import { resolvers } from './resolvers';
 import { connection } from './utils/mongo';
 import {PubSub} from 'graphql-subscriptions'
 import cors from 'cors'
+import { authCheckerMiddleware } from './utils/middleware/authVerification.middleware';
+import { Context } from './utils/context';
+import jwt from 'jsonwebtoken';
+
 // import { consumer } from './utils/kafka';
 
 
@@ -15,10 +19,38 @@ dotenv.config();
 
 async function bootstrap(){
 
+  const authChecker: AuthChecker<Context> = ({ context }, roles) => {
+    // console.log(context.req.headers.authorization.split(" ")[1], context?.user)
+    // return !!context.user;
+    const token = context?.req?.headers?.authorization?.split(" ")[1] || null; // Extract the token from the cookie (you may use other methods like headers)
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.PRIVATEKEY); // Verify and decode the token
+        context.user = decoded as any; // Attach the decoded user information to the context
+        if(roles?.length<1){
+          return true;
+        }else{
+          if(context.user?.userAccessType.toLowerCase()===roles[0].toLowerCase()){
+            return true;
+          }else{
+            return false;
+          }
+        }
+      } catch (err) {
+        return false
+      }
+    }
+  
+    // // Check if the user has any of the required roles
+    // const hasRequiredRoles = roles.some((role) => context.user.roles.includes(role));
+    // return hasRequiredRoles;
+  };
+
   // Build Schema
   const schema = await buildSchema({
     resolvers,
-    // authChecker,
+    // globalMiddlewares: [authCheckerMiddleware],
+    authChecker: authChecker,
   });
 
   // Init express
@@ -40,21 +72,22 @@ async function bootstrap(){
   // });
 
   // apply cookie parser as middleware
+  app.use(cors());
   app.use(cookieParser());
   
-  app.use(cors())
   // create apollo server
   const server = new ApolloServer({
     schema,
-    context: (ctx) => console.log(ctx),
+    context: ({req, res}) :Context => ({req, res}),
     introspection:true,
   });
-
+  
   // start apollo server
   await server.start();
 
   // apply Express as middleware to apollo server
   server.applyMiddleware({app});
+
 
   // start express server on set port 
   app.listen({port: process.env.PORT}, () => console.log(`server is up on port ${process.env.PORT}`));

@@ -311,4 +311,20 @@ export class EmployeeService {
         }
     }
 
+    async checkUserByEmail(email){
+        try{
+            const user = await employeeModal.findOne({'metadata.email': email});
+            
+            return {
+                response : {_id: user?._id, name: user?.lastname, email}
+            }
+        }
+        catch(err){
+            return {
+                response: null,
+                message: err.message
+            }
+        }
+    }
+
 }

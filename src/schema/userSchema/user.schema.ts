@@ -8,7 +8,7 @@ import { ObjectId } from "mongoose";
 @InputType()
 export class userInput{
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     employeeId:string
 
     @MinLength(8,{
@@ -21,10 +21,10 @@ export class userInput{
     password?:string
 
     
-    @Field(()=> Number)
+    @Field(()=> Number, {nullable: true})
     isManualPassword: number;
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @prop()
     userAccessType: string;
 
@@ -73,6 +73,16 @@ export class User{
     @prop()
     lastActive?: string;
 
+    
+    @Field(()=>String, {nullable: true})
+    @prop()
+    createdAt?: string;
+
+    
+    @Field(()=>String, {nullable: true})
+    @prop()
+    updatedAt?: string;
+
 }
 
 @ObjectType()
@@ -92,6 +102,12 @@ export class UserReponse{
 
 
 
+}
+
+@ObjectType()
+export class IsLoginResponse{
+    @Field(()=>Boolean)
+    isLogin: boolean
 }
 
 export const UserModal = getModelForClass(User)
