@@ -1,6 +1,7 @@
-import { Arg, Mutation, Resolver, Query } from "type-graphql";
+import { Arg, Mutation, Resolver, Query, Authorized, Ctx } from "type-graphql";
 import { BulkEmployeeUpdateInput, EmployeeFilter, EmployeeGenericResponse, EmployeeInput, EmployeeUpdateInput } from "../../schema/employeeSchema/employee.schema";
 import { EmployeeService } from "../../service/employee/employee.service";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export class EmployeeResolver{
@@ -13,8 +14,10 @@ export class EmployeeResolver{
         return this.employeeService.addEmployee(input)
     }
 
+    @Authorized('standardPermissions')
     @Query(()=>EmployeeGenericResponse)
-    getEmployee(@Arg('input', {validate: true}) input: EmployeeFilter){
+    getEmployee(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: EmployeeFilter){
+
         return this.employeeService.getEmployee(input);
     }
 
@@ -31,5 +34,10 @@ export class EmployeeResolver{
     @Mutation(()=>EmployeeGenericResponse)
     updateBulkEmployee(@Arg('input', {validate:true}) input:BulkEmployeeUpdateInput){
         return this.employeeService.updateBulkEmployee(input);
+    }
+
+    @Query(()=>EmployeeGenericResponse)
+    checkUserByEmail(@Arg('email', {validate: true}) email:string){
+        return this.employeeService.checkUserByEmail(email);
     }
 }
