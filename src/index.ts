@@ -30,7 +30,7 @@ async function bootstrap(){
         if(roles?.length<1){
           return true;
         }else{
-          if(context.user?.userAccessType.toLowerCase()===roles[0].toLowerCase()){
+          if(roles.find((role)=>role.toLowerCase()==context.user?.userAccessType.toLowerCase())){
             return true;
           }else{
             return false;
