@@ -14,7 +14,7 @@ export class EmployeeResolver{
         return this.employeeService.addEmployee(input)
     }
 
-    @Authorized('standardPermissions')
+    @Authorized(['standardPermissions', 'customPermissions', 'adminPermission'])
     @Query(()=>EmployeeGenericResponse)
     getEmployee(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: EmployeeFilter){
 
