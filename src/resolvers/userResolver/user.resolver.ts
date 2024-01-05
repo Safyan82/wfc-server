@@ -20,11 +20,16 @@ export default class UserResolver {
         return this.userService.newUser(input)
     }
 
+    @Mutation(() => UserReponse)
+    updateUser(@Arg('input', {validate: true}) input: userInput){
+        return this.userService.updateUser(input)
+    }
+
     @Mutation(()=> UserReponse)
-    async verifyPassword(
+    async verifyPassword(@Ctx() ctx: Context,
         @Arg('input', {validate: true}) input: userInput
         ){
-        return this.userService.verifyPassword(input);
+        return this.userService.verifyPassword(input, ctx);
     }
 
 
@@ -42,8 +47,14 @@ export default class UserResolver {
             }
         }else{
             return {
-                isLogin: false,
+                isLogin: true,
             }
         }
+    }
+
+    @Authorized()
+    @Query(()=>UserReponse)
+    getUserByEmpId(@Arg('employeeId', {validate: true}) employeeId: string){
+        return this.userService.getUserByEmpId(employeeId);
     }
 }

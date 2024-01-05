@@ -1,6 +1,7 @@
-import { Arg, Args, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { BranchObjectService } from "../../service/branchObjectService/branchObject.service";
 import { BulkBranchObjectInput, DeleteBranchObjectInput, GenericBranchObjectTypeResponse, branchObjectInput } from "../../schema/branchObjectSchema/branchObject.schema";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export class BranchObjectResolver{
@@ -8,9 +9,10 @@ export class BranchObjectResolver{
         this.branchObjectService = new BranchObjectService();
     }
 
+    @Authorized()
     @Query(()=> GenericBranchObjectTypeResponse)
-    getBranchProperty(){
-        return this.branchObjectService.branchObject();
+    getBranchProperty(@Ctx() ctx:Context){
+        return this.branchObjectService.branchObject(ctx);
     }
 
     @Mutation(()=> GenericBranchObjectTypeResponse)

@@ -46,6 +46,7 @@
     "graphql": "^16.7.1",
     "graphql-subscriptions": "^2.0.0",
     "graphql-type-json": "^0.3.2",
+    "iplocation": "^7.2.0",
     "jsonwebtoken": "^9.0.0",
     "kafka-node": "^5.0.0",
     "mongoose": "^7.2.2",

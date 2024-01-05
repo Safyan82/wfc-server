@@ -2,6 +2,7 @@ import { Arg, Mutation, Resolver, Query, Authorized, Ctx } from "type-graphql";
 import { BulkEmployeeUpdateInput, EmployeeFilter, EmployeeGenericResponse, EmployeeInput, EmployeeUpdateInput } from "../../schema/employeeSchema/employee.schema";
 import { EmployeeService } from "../../service/employee/employee.service";
 import { Context } from "../../utils/context";
+import { accessType } from "../../utils/objectype";
 
 @Resolver()
 export class EmployeeResolver{
@@ -14,11 +15,18 @@ export class EmployeeResolver{
         return this.employeeService.addEmployee(input)
     }
 
-    @Authorized(['standardPermissions', 'customPermissions', 'adminPermission'])
+    @Authorized([...Object.values(accessType)])
     @Query(()=>EmployeeGenericResponse)
     getEmployee(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: EmployeeFilter){
-
-        return this.employeeService.getEmployee(input);
+        if(ctx?.user?.permission?.Employee?.view=="None"){
+            return {
+                response: null,
+                success: 1,
+                message: "Access denied for employees",
+            };
+        }else{
+            return this.employeeService.getEmployee(input, ctx);
+        }
     }
 
     @Query(()=>EmployeeGenericResponse)
