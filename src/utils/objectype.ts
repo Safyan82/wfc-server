@@ -5,3 +5,10 @@ export const objectTypeList = {
     SiteGroup: "Site Group",
     customer: "Customer",
 };
+
+export const accessType = {
+    StandardPermission : 'STANDARD PERMISSIONS',
+    CustomerPermission : 'CUSTOM PERMISSION',
+    AdminPermission : 'ADMIN PERMISSION'
+
+}

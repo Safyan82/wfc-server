@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
 import { employeeObjectModal } from "../../schema/employeeObjectSchema/employeeObject.Schema";
 import { PropertiesService } from "../propertiesService/properties.service";
+import { objectTypeList } from "../../utils/objectype";
+import { extractPermittedPropIds } from "../../utils/permissionPower/extractPermittedProps";
+
 
 export class EmployeeObjectService{
     async generateMandatoryObject(propertyId, isReadOnly){
@@ -126,10 +129,18 @@ export class EmployeeObjectService{
         }
     }
 
-    async employeeObject(){
+    async employeeObject(ctx){
         try{
+            
+            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Employee);
+
             const employeeObjectData = await employeeObjectModal.aggregate([
-                
+                {
+                    $match:{
+                        propertyId: {$in: Permittedproperties}
+                    }
+                },
+
                 {
                   $lookup: {
                     from: "properties",

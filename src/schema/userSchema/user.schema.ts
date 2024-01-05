@@ -9,6 +9,9 @@ import { ObjectId } from "mongoose";
 export class userInput{
 
     @Field(()=>ID, {nullable: true})
+    _id:string
+
+    @Field(()=>ID, {nullable: true})
     employeeId:string
 
     @MinLength(8,{
@@ -19,6 +22,10 @@ export class userInput{
     })
     @Field(()=>String,{nullable: true})
     password?:string
+    
+    @Field(()=> String,{nullable: true})
+    @prop()
+    email: string;
 
     
     @Field(()=> Number, {nullable: true})
@@ -51,6 +58,10 @@ export class User{
     @Field(()=> String,{nullable: true})
     @prop()
     isManualPassword: string;
+
+    @Field(()=> String,{nullable: true})
+    @prop()
+    email: string;
 
     @Field(()=>String, {nullable: true})
     @prop()

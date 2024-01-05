@@ -2,7 +2,10 @@ import dayjs from "dayjs"
 import { Employee, employeeModal } from "../../schema/employeeSchema/employee.schema"
 import mongoose, { mongo } from "mongoose";
 import { EmployeePropertyHistoryService } from "../employeePropertyHistoryService/employeePropertyHistory.service";
-
+import { objectTypeList } from "../../utils/objectype";
+import { extractPermittedProps } from "../../utils/permissionPower/extractPermittedProps";
+import { convertArrayToObject } from "../../utils/convertArrayToObject/convertArrayToObject";
+import { UserModal } from "../../schema/userSchema/user.schema";
 export class EmployeeService {
     async addEmployee(input){
         try{
@@ -20,9 +23,9 @@ export class EmployeeService {
         }
     }
 
-    async getEmployee(input){
+    async getEmployee(input, ctx){
         try{
-
+            
             const {filters} = input;
 
             const matchStage = {
@@ -181,6 +184,20 @@ export class EmployeeService {
                 });
             };
 
+            // Specify the fields you want to include in the result
+            const Permittedproperties = extractPermittedProps(ctx, objectTypeList.Employee);
+            
+            const projectionStage = {
+                $project: {
+                    _id: 1,
+                    // Add more fields to include as needed
+                    ...Permittedproperties,
+                    branch: 1,
+                    metadata: 1,
+                }
+            };         
+
+            // console.log(projectionStage)
             
             const employee = await employeeModal.aggregate([
                 matchStage,
@@ -210,11 +227,15 @@ export class EmployeeService {
                     }
                 }
             ]);
-            return {
-                response: employee?.map((emp)=> ({...emp, branch: emp.branch.branchname})),
-                success: 1,
-                message: "Employee reterived successfully",
-            };
+          
+            // return response if all employee have to use
+            if(ctx?.user?.permission?.Employee?.view!=="None"){
+                return {
+                    response: employee?.map((emp)=> ({...emp, branch: emp.branch.branchname})),
+                    success: 1,
+                    message: "Employee reterived successfully",
+                };
+            }
         }
         catch(err){
             throw new Error(err);
@@ -313,10 +334,10 @@ export class EmployeeService {
 
     async checkUserByEmail(email){
         try{
-            const user = await employeeModal.findOne({'metadata.email': email});
+            const user = await UserModal.findOne({'email': email});
             
             return {
-                response : {_id: user?._id, name: user?.lastname, email}
+                response : {_id: user?.employeeId, email}
             }
         }
         catch(err){

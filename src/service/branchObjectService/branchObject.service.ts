@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { BranchObject, branchObjectModal } from "../../schema/branchObjectSchema/branchObject.schema";
 import { PropertiesService } from "../propertiesService/properties.service";
+import { objectTypeList } from "../../utils/objectype";
+import { extractPermittedPropIds } from "../../utils/permissionPower/extractPermittedProps";
 
 export class BranchObjectService{
     
@@ -103,10 +105,16 @@ export class BranchObjectService{
         }
     }
 
-    async branchObject(){
+    async branchObject(ctx){
         try{
+            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Branch);
+
             const branchObjectData = await branchObjectModal.aggregate([
-                
+                {
+                    $match:{
+                        propertyId:{ $in: Permittedproperties}
+                    }
+                },
                 {
                   $lookup: {
                     from: "properties",

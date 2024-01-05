@@ -1,6 +1,7 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { EmployeeObjectService } from "../../service/employeeObjectService/employeeObject.service";
 import { BulkEmployeeObjectInput, DeleteEmployeeObjectInput, GenericEmployeeObjectResponse, employeeObjectInput } from "../../schema/employeeObjectSchema/employeeObject.Schema";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export class EmployeeObjectResolver{
@@ -8,9 +9,10 @@ export class EmployeeObjectResolver{
         this.employeeObjectService = new EmployeeObjectService();
     }
 
+    @Authorized()
     @Query(()=>GenericEmployeeObjectResponse)
-    getEmployeeObject(){
-        return this.employeeObjectService.employeeObject()
+    getEmployeeObject(@Ctx() ctx: Context,){
+        return this.employeeObjectService.employeeObject(ctx)
     }
 
     @Mutation(()=> GenericEmployeeObjectResponse)

@@ -12,6 +12,7 @@ import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
+import { UserAccessResolver } from "./userAccessResolver/userAccess.resolver";
 import UserResolver from "./userResolver/user.resolver";
 import { UserRoleResolver } from "./userRoleResolver/userRole.resolver";
 
@@ -33,4 +34,5 @@ export const resolvers = [
     EmployeeDetailViewResolver,
     EmployeePropertyHistoryResolver,
     UserRoleResolver,
+    UserAccessResolver
 ] as const
