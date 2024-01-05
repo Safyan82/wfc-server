@@ -4,7 +4,8 @@ import { sign } from "jsonwebtoken";
 import dayjs from "dayjs";
 import mongoose from "mongoose";
 import { UserAccessService } from "../userAccessService/userAccess.service";
-import { getLocation } from '../../utils/getUserLocation'
+import { getLocation } from '../../utils/getUserLocation';
+import axios, { AxiosResponse } from 'axios';
 // import { consumer, producer } from "../utils/kafka";
 
 class UserService{
@@ -50,14 +51,17 @@ class UserService{
             );
             const {userAccessType, userRole, permission, _id, userRolePermission} = userDetail[0];
 
-            // // log user access
-            // const userAccessService = new UserAccessService();
-            // await userAccessService.newAccess({
-            //     ip: ctx?.req.socket.remoteAddress,
-            //     userId: _id,
-            //     employeeId,
-            //     location: await getLocation(ctx?.req.socket.remoteAddress)
-            // })
+            // log user access
+            const userAccessService = new UserAccessService();
+            const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3];
+            const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
+            const locationData = response.data;
+            await userAccessService.newAccess({
+                ip: ipaddr,
+                userId: _id,
+                employeeId,
+                location: locationData.city
+            })
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
             if(isPasswordVerified){
