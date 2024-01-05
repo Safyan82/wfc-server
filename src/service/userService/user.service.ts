@@ -50,15 +50,14 @@ class UserService{
             );
             const {userAccessType, userRole, permission, _id, userRolePermission} = userDetail[0];
 
-            // log user access
-            const userAccessService = new UserAccessService();
-            await userAccessService.newAccess({
-                ip: ctx?.req.socket.remoteAddress,
-                userId: _id,
-                employeeId,
-                location: "asdd"
-                // await getLocation(ctx?.req.socket.remoteAddress)
-            })
+            // // log user access
+            // const userAccessService = new UserAccessService();
+            // await userAccessService.newAccess({
+            //     ip: ctx?.req.socket.remoteAddress,
+            //     userId: _id,
+            //     employeeId,
+            //     location: await getLocation(ctx?.req.socket.remoteAddress)
+            // })
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
             if(isPasswordVerified){

@@ -47,7 +47,7 @@ export default class UserResolver {
             }
         }else{
             return {
-                isLogin: true,
+                isLogin: false,
             }
         }
     }
