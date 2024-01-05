@@ -15,7 +15,7 @@ export class EmployeeResolver{
         return this.employeeService.addEmployee(input)
     }
 
-    @Authorized([...Object.values(accessType)])
+    @Authorized()
     @Query(()=>EmployeeGenericResponse)
     getEmployee(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: EmployeeFilter){
         if(ctx?.user?.permission?.Employee?.view=="None"){
