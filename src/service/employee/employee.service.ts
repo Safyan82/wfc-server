@@ -185,17 +185,17 @@ export class EmployeeService {
             };
 
             // Specify the fields you want to include in the result
-            const Permittedproperties = extractPermittedProps(ctx, objectTypeList.Employee);
+            // const Permittedproperties = extractPermittedProps(ctx, objectTypeList.Employee);
             
-            const projectionStage = {
-                $project: {
-                    _id: 1,
-                    // Add more fields to include as needed
-                    ...Permittedproperties,
-                    branch: 1,
-                    metadata: 1,
-                }
-            };         
+            // const projectionStage = {
+            //     $project: {
+            //         _id: 1,
+            //         // Add more fields to include as needed
+            //         ...Permittedproperties,
+            //         branch: 1,
+            //         metadata: 1,
+            //     }
+            // };         
 
             // console.log(projectionStage)
             
