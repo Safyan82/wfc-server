@@ -3,6 +3,8 @@ import { employeeObjectModal } from "../../schema/employeeObjectSchema/employeeO
 import { PropertiesService } from "../propertiesService/properties.service";
 import { objectTypeList } from "../../utils/objectype";
 import { extractPermittedPropIds } from "../../utils/permissionPower/extractPermittedProps";
+import { UserAccessService } from "../userAccessService/userAccess.service";
+import { getLocation } from '../../utils/getUserLocation'
 
 
 export class EmployeeObjectService{
@@ -131,7 +133,15 @@ export class EmployeeObjectService{
 
     async employeeObject(ctx){
         try{
-            
+            // log user access
+            const userAccessService = new UserAccessService();
+            await userAccessService.newAccess({
+                ip: ctx?.req.socket.remoteAddress,
+                userId: "23",
+                employeeId: '33',
+                location: await getLocation(ctx?.req.socket.remoteAddress)
+            })
+
             const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Employee);
 
             const employeeObjectData = await employeeObjectModal.aggregate([
