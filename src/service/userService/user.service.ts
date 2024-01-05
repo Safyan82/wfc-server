@@ -56,7 +56,8 @@ class UserService{
                 ip: ctx?.req.socket.remoteAddress,
                 userId: _id,
                 employeeId,
-                location: await getLocation(ctx?.req.socket.remoteAddress)
+                location: "asdd"
+                // await getLocation(ctx?.req.socket.remoteAddress)
             })
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
