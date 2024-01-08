@@ -53,14 +53,14 @@ class UserService{
 
             // log user access
             const userAccessService = new UserAccessService();
-            const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3];
-            const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
-            const locationData = response.data;
+            // const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3];
+            // const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
+            // const locationData = response.data;
             await userAccessService.newAccess({
-                ip: ipaddr,
+                ip: "ipaddr",
                 userId: _id,
                 employeeId,
-                location: locationData.city
+                // location: locationData.city
             })
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
