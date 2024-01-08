@@ -6,7 +6,7 @@ import { objectTypeList } from "../../utils/objectype";
 import { extractPermittedProps } from "../../utils/permissionPower/extractPermittedProps";
 import { convertArrayToObject } from "../../utils/convertArrayToObject/convertArrayToObject";
 import { UserModal } from "../../schema/userSchema/user.schema";
-import { MailService } from "../mailService/mail.service";
+// import { MailService } from "../mailService/mail.service";
 export class EmployeeService {
     async addEmployee(input){
         try{
@@ -26,9 +26,9 @@ export class EmployeeService {
 
     async getEmployee(input, ctx){
         try{
-            const mail = new MailService();
-            await mail.sendMail();
-            
+            // const mail = new MailService();
+            // await mail.sendMail();
+
             const {filters} = input;
 
             const matchStage = {
