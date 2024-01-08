@@ -21,6 +21,7 @@ export default class UserResolver {
     }
 
     @Mutation(() => UserReponse)
+    @UseMiddleware(HashPasswordMiddleware)
     updateUser(@Arg('input', {validate: true}) input: userInput){
         return this.userService.updateUser(input)
     }
