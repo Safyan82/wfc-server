@@ -11,6 +11,7 @@ import cors from 'cors'
 import { authCheckerMiddleware } from './utils/middleware/authVerification.middleware';
 import { Context } from './utils/context';
 import jwt from 'jsonwebtoken';
+import UserService from './service/userService/user.service';
 
 // import { consumer } from './utils/kafka';
 
@@ -19,14 +20,18 @@ dotenv.config();
 
 async function bootstrap(){
 
-  const authChecker: AuthChecker<Context> = ({ context }, roles) => {
+  const authChecker: AuthChecker<Context> = async ({ context }, roles) => {
     // console.log(context.req.headers.authorization.split(" ")[1], context?.user)
     // return !!context.user;
     const token = context?.req?.headers?.authorization?.split(" ")[1] || null; // Extract the token from the cookie (you may use other methods like headers)
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.PRIVATEKEY); // Verify and decode the token
-        context.user = decoded as any; // Attach the decoded user information to the context
+        const  {employeeId} = decoded as any;
+        const userService = new UserService();
+        const userDetail = await userService.getUserByEmpId(employeeId);
+        const {password, ...rest} = userDetail?.response[0];
+        context.user = rest; // Attach the decoded user information to the context
         if(roles?.length<1){
           return true;
         }else{

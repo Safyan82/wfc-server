@@ -18,6 +18,8 @@ export class EmployeeResolver{
     @Authorized()
     @Query(()=>EmployeeGenericResponse)
     getEmployee(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: EmployeeFilter){
+       
+        
         if(ctx?.user?.permission?.Employee?.view=="None"){
             return {
                 response: null,

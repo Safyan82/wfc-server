@@ -2,7 +2,8 @@ import dayjs from "dayjs";
 import { BranchModal, createBranchInput } from "../../schema/branchSchema/branch.schema";
 import { BranchPropertyHistoryService } from "../branchPropertyHistoryService/branchPropertyHistory.service";
 import mongoose from "mongoose";
-
+import { extractPermittedProps } from "../../utils/permissionPower/extractPermittedProps";
+import { objectTypeList } from "../../utils/objectype";
 export default class BranchService{
     async createBranch(input: createBranchInput){
         try{
@@ -19,7 +20,7 @@ export default class BranchService{
         }
     }
 
-    async branches(input){
+    async branches(input, customBranch){
         try{
 
             const {filters} = input;
@@ -32,6 +33,13 @@ export default class BranchService{
                 }
             };
 
+            if(customBranch?.length>0){
+                matchStage.$match.$and.push(
+                {_id: {
+                    $in: customBranch
+                }}
+                );
+            }
 
             matchStage.$match.$and.push({
                 branchname:{
@@ -180,7 +188,7 @@ export default class BranchService{
                 });
             };
 
-            console.log(matchStage.$match.$and)
+            // console.log(matchStage.$match.$and)
             
             const branch = await BranchModal.aggregate([
                 matchStage,

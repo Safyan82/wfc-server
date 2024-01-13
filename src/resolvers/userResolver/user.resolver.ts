@@ -3,6 +3,7 @@ import { userInput, User, UserReponse, IsLoginResponse } from '../../schema/user
 import UserService from '../../service/userService/user.service';
 import HashPasswordMiddleware from '../../utils/middleware/hashPassword.middleware';
 import { Context } from '../../utils/context';
+import { UserAccessService } from '../../service/userAccessService/userAccess.service';
 
 @Resolver()
 export default class UserResolver {
@@ -41,10 +42,19 @@ export default class UserResolver {
   
     @Authorized()
     @Query(()=>IsLoginResponse)
-    IsLogin(@Ctx() ctx: Context){
+    async IsLogin(@Ctx() ctx: Context, @Arg('deviceId') deviceId: String){
         if(ctx?.user){
-            return {
-                isLogin: true,
+            const userAccessService = new UserAccessService();
+            const isCurrentSessionActive = await userAccessService.currentSessionStatus(deviceId);
+            console.log(isCurrentSessionActive);
+            
+            if(isCurrentSessionActive){
+
+                return {
+                    isLogin: true,
+                }
+            }else{
+                throw Error("Session is terminated")
             }
         }else{
             return {
@@ -53,9 +63,15 @@ export default class UserResolver {
         }
     }
 
-    @Authorized()
+    // @Authorized()
     @Query(()=>UserReponse)
     getUserByEmpId(@Arg('employeeId', {validate: true}) employeeId: string){
         return this.userService.getUserByEmpId(employeeId);
+    }
+
+    @Mutation(()=>UserReponse)
+    @UseMiddleware(HashPasswordMiddleware)
+    setPasswordForInvitedUser(@Arg('input', {validate: true}) input: userInput){
+        return this.userService.setPasswordForInvitedUser(input);
     }
 }

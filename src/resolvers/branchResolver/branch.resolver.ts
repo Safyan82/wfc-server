@@ -1,6 +1,8 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Branch, BranchFilter, BranchGenericResponse, BranchUpdateInput, Branches, BulkBranchUpdateInput, createBranchInput } from "../../schema/branchSchema/branch.schema";
 import BranchService from "../../service/branchService/branch.service";
+import { Context } from "../../utils/context";
+import mongoose from "mongoose";
 
 @Resolver()
 export default class BranchResolver {
@@ -13,11 +15,11 @@ export default class BranchResolver {
         return this.branchService.createBranch(input)
     }
 
-
+    @Authorized()
     @Query(()=>[Branch])
-    branches(@Arg('input', {validate: true}) input: BranchFilter){
-        // console.log(input);
-        return this.branchService.branches(input)
+    branches(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: BranchFilter,){
+        const customBranch = ctx?.user?.permission?.Branch?.customBranch?.map((branch)=>new mongoose.Types.ObjectId(branch.id));
+        return this.branchService.branches(input, customBranch)
     }
 
     @Query(()=>Branch)
