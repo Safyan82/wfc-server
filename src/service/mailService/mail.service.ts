@@ -4,7 +4,7 @@ import mail from "@sendgrid/mail";
 export class MailService {
     async sendMail(email, employeeId){
         const username = "Safyan";
-        mail.setApiKey("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");
+        mail.setApiKey("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");
         const msg = {
         to: email, // Change to your recipient
         from: 'safyan@intraguard.co.uk', // Change to your verified sender
