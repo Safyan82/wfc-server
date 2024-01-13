@@ -43,6 +43,12 @@ export class userInput{
     @prop({required: false})
     permission?:any;
 
+    
+    
+    @Field(()=>GraphQLJSON,{nullable:true})
+    @Prop({required: false})
+    platform?:any;
+
 }
 
 @ObjectType()
@@ -58,6 +64,11 @@ export class User{
     @Field(()=> String,{nullable: true})
     @prop()
     isManualPassword: string;
+
+    
+    @Field(()=> Boolean,{nullable: true})
+    @prop()
+    isInviteExpired: boolean;
 
     @Field(()=> String,{nullable: true})
     @prop()

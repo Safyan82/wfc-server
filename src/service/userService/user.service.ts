@@ -6,14 +6,20 @@ import mongoose from "mongoose";
 import { UserAccessService } from "../userAccessService/userAccess.service";
 import { getLocation } from '../../utils/getUserLocation';
 import axios, { AxiosResponse } from 'axios';
+import { MailService } from "../mailService/mail.service";
 // import { consumer, producer } from "../utils/kafka";
 
 class UserService{
 
     async newUser(input: userInput){
         try{
+
             const user = await UserModal.create({...input, createdAt: dayjs()});
-              
+            if(!input?.isManualPassword){
+                const mail = new MailService();
+                await mail.sendMail(input?.email, input?.employeeId);
+            }
+
             return {
                 success: 1,
                 message: "User Created successfully",
@@ -53,14 +59,16 @@ class UserService{
 
             // log user access
             const userAccessService = new UserAccessService();
-            const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3];
+            const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3] || "86.23.81.228";
+            console.log(ipaddr)
             const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
             const locationData = response.data;
-            await userAccessService.newAccess({
+            const deviceId = await userAccessService.newAccess({
                 ip: ipaddr,
                 userId: _id,
                 employeeId,
-                location: locationData.city
+                location: locationData.city,
+                platform: input?.platform
             })
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
@@ -68,14 +76,14 @@ class UserService{
                 if(userRolePermission?.length>0){
                     const token = sign({ employeeId, userAccessType, role: userRole, permission: userRolePermission[0]?.permission }, process.env.PRIVATEKEY, {expiresIn: "100 days"});
                     return {
-                        response: {token , userAccessType, userRole, permission: userRolePermission[0]?.permission, _id, employeeId },
+                        response: {token , userAccessType, userRole, permission: userRolePermission[0]?.permission, _id, employeeId, deviceId },
                         message: "User logged in successfully"
                     }
 
                 }else{
                     const token = sign({ employeeId, userAccessType, role: userRole, permission }, process.env.PRIVATEKEY, {expiresIn: "100 days"});
                     return {
-                        response: {token , userAccessType, userRole, permission, _id, employeeId },
+                        response: {token , userAccessType, userRole, permission, _id, employeeId, deviceId },
                         message: "User logged in successfully"
                     }
                 }
@@ -127,6 +135,10 @@ class UserService{
             const filter = {employeeId: employeeId};
             const update = {$set: {...rest, updatedAt: dayjs()}}
             const updatedUser = await UserModal.updateOne(filter, update);
+            if(!input?.isManualPassword){
+                const mail = new MailService();
+                await mail.sendMail(input?.email, input?.employeeId);
+            }
             return{
                 message: "user updated successfully",
                 response: updatedUser
@@ -167,6 +179,25 @@ class UserService{
             return{
                 message: err.message,
                 response: null
+            }
+        }
+    }
+
+
+    async setPasswordForInvitedUser(input){
+        try{
+            await UserModal.updateOne({employeeId: input?.employeeId}, {$set: {password: input?.password, isInviteExpired: true}});
+            return {
+                success: 1,
+                response: null,
+                message: "Password has been setup successfully !",
+            }
+        }
+        catch(err){
+            return {
+                success: 0, 
+                response: null,
+                message: "An error encountered while setting your password"
             }
         }
     }

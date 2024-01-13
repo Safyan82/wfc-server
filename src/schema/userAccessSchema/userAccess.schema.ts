@@ -30,12 +30,26 @@ export class userAccess{
     @Prop({default: dayjs().format('DD-MM-YYYY HH:mm:ss')})
     accessedAt: string
 
+    
+    @Field(()=>GraphQLJSON,{nullable:true})
+    @Prop({required: false})
+    platform?:any;
+
+    @Field(()=>Boolean,{nullable:true})
+    @Prop({default: true})
+    isActive?:boolean;
 }
 
 @ObjectType()
 export class userAccessResponse extends userAccess{
     @Field(()=>GraphQLJSON)
     employee: any
+}
+
+@ObjectType()
+export class DeactivedResponse {
+    @Field(()=>String)
+    message: any
 }
 
 export const UserAccessModal = getModelForClass(userAccess);

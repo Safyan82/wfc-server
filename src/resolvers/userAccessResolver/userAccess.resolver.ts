@@ -1,6 +1,6 @@
-import { Authorized, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
 import { UserAccessService } from "../../service/userAccessService/userAccess.service";
-import { userAccess, userAccessResponse } from "../../schema/userAccessSchema/userAccess.schema";
+import { DeactivedResponse, userAccess, userAccessResponse } from "../../schema/userAccessSchema/userAccess.schema";
 
 @Resolver()
 export class UserAccessResolver{
@@ -8,9 +8,15 @@ export class UserAccessResolver{
         this.userAccessService = new UserAccessService();
     }
 
-    // @Authorized()
+    @Authorized()
     @Query(()=>[userAccessResponse])
     getUsersAccessLog(){
         return this.userAccessService.getUsersAccessLog();
+    }
+
+    
+    @Mutation(()=>DeactivedResponse)
+    deactiveSession(@Arg('id') id:String ){
+        return this.userAccessService.deactiveSession(id);
     }
 }

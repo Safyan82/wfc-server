@@ -6,7 +6,7 @@ import { objectTypeList } from "../../utils/objectype";
 import { extractPermittedProps } from "../../utils/permissionPower/extractPermittedProps";
 import { convertArrayToObject } from "../../utils/convertArrayToObject/convertArrayToObject";
 import { UserModal } from "../../schema/userSchema/user.schema";
-// import { MailService } from "../mailService/mail.service";
+import { MailService } from "../mailService/mail.service";
 export class EmployeeService {
     async addEmployee(input){
         try{
@@ -26,8 +26,8 @@ export class EmployeeService {
 
     async getEmployee(input, ctx){
         try{
-            // const mail = new MailService();
-            // await mail.sendMail();
+            const customBranch = ctx?.user?.permission?.Branch?.customBranch?.map((branch)=>new mongoose.Types.ObjectId(branch.id));
+            const customEmployee = ctx?.user?.permission?.Employee?.customEmployee?.map((emp)=>new mongoose.Types.ObjectId(emp.id));
 
             const {filters} = input;
 
@@ -38,6 +38,23 @@ export class EmployeeService {
                     ]
                 }
             };
+
+            if(customBranch?.length>0){
+                matchStage.$match.$and.push(
+                {branch: {
+                    $in: customBranch
+                }}
+                );
+            }
+
+            
+            if(customEmployee?.length>0){
+                matchStage.$match.$and.push(
+                {_id: {
+                    $in: customEmployee
+                }}
+                );
+            }
 
 
             matchStage.$match.$and.push({
@@ -187,20 +204,13 @@ export class EmployeeService {
                 });
             };
 
-            // Specify the fields you want to include in the result
-            // const Permittedproperties = extractPermittedProps(ctx, objectTypeList.Employee);
-            
-            // const projectionStage = {
-            //     $project: {
-            //         _id: 1,
-            //         // Add more fields to include as needed
-            //         ...Permittedproperties,
-            //         branch: 1,
-            //         metadata: 1,
-            //     }
-            // };         
-
-            // console.log(projectionStage)
+            if(filters?.branch?.length>0){
+                matchStage.$match.$and.push({
+                    branch: {
+                        $in: filters?.branch?.map((branch)=> new mongoose.Types.ObjectId(branch))
+                    }
+                })
+            }
             
             const employee = await employeeModal.aggregate([
                 matchStage,
