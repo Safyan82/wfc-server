@@ -15,7 +15,8 @@ const extractPermittedPropIds = (ctx, obj) => {
     const properties = propsPermission?.filter((prop)=>
         ctx?.user?.permission[obj][prop]?.visible==1
     )
-    const PropertiesObjectType = properties?.map((prop)=>new mongoose.Types.ObjectId(prop));
+    console.log(properties, "extractPermittedPropIds")
+    const PropertiesObjectType = properties?.map((prop)=>new mongoose.Types.ObjectId(prop)) || [];
     return PropertiesObjectType;
 }
 

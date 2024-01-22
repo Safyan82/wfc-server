@@ -132,15 +132,28 @@ export class EmployeeObjectService{
     async employeeObject(ctx){
         try{
 
-            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Employee);
+            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Employee) || [];
+            console.log(Permittedproperties, "pop")
+            let matchStage = {
+                $match: {
+                    $and: [
+                        {
+                            propertyId: {
+                                $ne: null
+                            }
+                        }
+                    ]
+                }
+            };
 
+            if(Permittedproperties?.length>0){
+                matchStage.$match.$and.push({
+                    propertyId: {$in: Permittedproperties}
+                })
+            }
+            
             const employeeObjectData = await employeeObjectModal.aggregate([
-                {
-                    $match:{
-                        propertyId: {$in: Permittedproperties}
-                    }
-                },
-
+                matchStage,
                 {
                   $lookup: {
                     from: "properties",

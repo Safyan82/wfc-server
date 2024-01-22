@@ -14,6 +14,12 @@ export class UserAccessResolver{
         return this.userAccessService.getUsersAccessLog();
     }
 
+    @Authorized()
+    @Query(()=>[userAccessResponse])
+    getUsersAccessLogByEmpId(@Arg('employeeId') employeeId:String){
+        return this.userAccessService.getUsersAccessLogByEmpId(employeeId);
+    }
+
     
     @Mutation(()=>DeactivedResponse)
     deactiveSession(@Arg('id') id:String ){

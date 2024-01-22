@@ -10,7 +10,8 @@ import { MailService } from "../mailService/mail.service";
 export class EmployeeService {
     async addEmployee(input){
         try{
-            const employee = await employeeModal.create({...input, createdAt: dayjs()});
+            const branch = input.branch.map((bran)=> new mongoose.Types.ObjectId(bran))
+            const employee = await employeeModal.create({...input,branch, createdAt: dayjs()});
             return{
                 message: "Employee added successfully",
                 response: input
@@ -26,7 +27,7 @@ export class EmployeeService {
 
     async getEmployee(input, ctx){
         try{
-            const customBranch = ctx?.user?.permission?.Branch?.customBranch?.map((branch)=>new mongoose.Types.ObjectId(branch.id));
+            const customBranch = ctx?.user?.permission?.Branch?.customBranch?.map((branch)=> new mongoose.Types.ObjectId(branch.id));
             const customEmployee = ctx?.user?.permission?.Employee?.customEmployee?.map((emp)=>new mongoose.Types.ObjectId(emp.id));
 
             const {filters} = input;
@@ -215,6 +216,18 @@ export class EmployeeService {
             const employee = await employeeModal.aggregate([
                 matchStage,
                 {
+                    $project: {
+                      key: "$_id",
+                      _id: 1,
+                      // Include other fields if needed
+                      firstname: 1,
+                      lastname: 1,
+                      branch: 1,
+                      metadata: 1,
+                      createdDate: 1,
+                    }
+                },
+                {
                     $lookup: {
                       from: "branches",
                       localField: "branch",
@@ -223,28 +236,18 @@ export class EmployeeService {
                     }
                 },
 
-                {
-                $unwind: "$branch"
-                },
+                // {
+                // $unwind: "$branch"
+                // },
 
-                {
-                    $project: {
-                      key: "$_id",
-                      _id: 1,
-                      // Include other fields if needed
-                      firstname: 1,
-                      lastname: 1,
-                      "branch": 1,
-                      metadata: 1,
-                      createdDate: 1,
-                    }
-                }
+                
             ]);
           
             // return response if all employee have to use
             if(ctx?.user?.permission?.Employee?.view!=="None"){
                 return {
-                    response: employee?.map((emp)=> ({...emp, branch: emp.branch.branchname})),
+                    response: employee?.map((emp)=> ({...emp, branch: emp.branch.map((branch)=> branch.branchname).join(", "), branches: emp.branch
+                    })),
                     success: 1,
                     message: "Employee reterived successfully",
                 };
@@ -272,8 +275,9 @@ export class EmployeeService {
     async updateEmployee(input){
         try{
             const {_id, ...rest} = input;
+            const branch = input?.branch?.map((bran)=> new mongoose.Types.ObjectId(bran))
             
-            let data = {$set:{updatedAt: dayjs()}};
+            let data = {$set:{updatedAt: dayjs(), branch}};
             const employeePropertyHistory = new EmployeePropertyHistoryService();
 
             const employeeData = await this.employee(_id);
@@ -285,9 +289,17 @@ export class EmployeeService {
                         await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData.metadata[prop?.name], _id);
                     }
                 }else{
-                    data.$set[prop.name] = prop.value;
-                    if(Object.keys(employeeData).includes(prop.name)){
-                        await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData[prop?.name], _id);
+                    if(prop.name=="branch"){
+                        console.log(prop.value?.map((propIds)=>new mongoose.Types.ObjectId(propIds?.id)), "proppp")
+                        data.$set[prop.name] = prop.value?.map((propIds)=>new mongoose.Types.ObjectId(propIds?.id));
+                        if(Object.keys(employeeData).includes(prop.name)){
+                            await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData[prop?.name], _id);
+                        }
+                    }else{
+                        data.$set[prop.name] = prop.value;
+                        if(Object.keys(employeeData).includes(prop.name)){
+                            await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData[prop?.name], _id);
+                        }
                     }
                 }
             });
@@ -302,6 +314,7 @@ export class EmployeeService {
         catch(err){
             return{
                 success: 0,
+                response: {error: err.message},
                 message: err.message,
             }
         }

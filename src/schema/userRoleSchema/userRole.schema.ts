@@ -28,6 +28,9 @@ export class UserRole{
 export class userRoleInput{
     
 
+    @Field(()=> String, {nullable: true})
+    _id: string
+
     @Field(()=> String)
     rolename: string
 

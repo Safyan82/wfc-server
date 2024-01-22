@@ -52,15 +52,23 @@ class UserService{
                       foreignField: "_id", // Assuming _id is the field in collectionB that matches the object key in collectionA
                       as: "userRolePermission"
                     }
+                },
+                {
+                    $lookup:{
+                      from: "employees",
+                      localField: "employeeId",
+                      foreignField: "_id", // Assuming _id is the field in collectionB that matches the object key in collectionA
+                      as: "employeeDetail"
+                    }
                 }
             ]
             );
-            const {userAccessType, userRole, permission, _id, userRolePermission} = userDetail[0];
+            const {userAccessType, userRole, permission, _id, userRolePermission, employeeDetail} = userDetail[0];
 
             // log user access
             const userAccessService = new UserAccessService();
             const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3] || "86.23.81.228";
-            console.log(ipaddr)
+           
             const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
             const locationData = response.data;
             const deviceId = await userAccessService.newAccess({
@@ -76,14 +84,14 @@ class UserService{
                 if(userRolePermission?.length>0){
                     const token = sign({ employeeId, userAccessType, role: userRole, permission: userRolePermission[0]?.permission }, process.env.PRIVATEKEY, {expiresIn: "100 days"});
                     return {
-                        response: {token , userAccessType, userRole, permission: userRolePermission[0]?.permission, _id, employeeId, deviceId },
+                        response: {token , userAccessType, userRole, permission: userRolePermission[0]?.permission, _id, employeeId, deviceId, employeeDetail },
                         message: "User logged in successfully"
                     }
 
                 }else{
                     const token = sign({ employeeId, userAccessType, role: userRole, permission }, process.env.PRIVATEKEY, {expiresIn: "100 days"});
                     return {
-                        response: {token , userAccessType, userRole, permission, _id, employeeId, deviceId },
+                        response: {token , userAccessType, userRole, permission, _id, employeeId, deviceId, employeeDetail },
                         message: "User logged in successfully"
                     }
                 }
@@ -135,7 +143,7 @@ class UserService{
             const filter = {employeeId: employeeId};
             const update = {$set: {...rest, updatedAt: dayjs()}}
             const updatedUser = await UserModal.updateOne(filter, update);
-            if(!input?.isManualPassword){
+            if(input?.isManualPassword!=="0"){
                 const mail = new MailService();
                 await mail.sendMail(input?.email, input?.employeeId);
             }
@@ -166,6 +174,14 @@ class UserService{
                       localField: "userRole",
                       foreignField: "_id", // Assuming _id is the field in collectionB that matches the object key in collectionA
                       as: "userRolePermission"
+                    }
+                },
+                {
+                    $lookup:{
+                      from: "employees",
+                      localField: "employeeId",
+                      foreignField: "_id", // Assuming _id is the field in collectionB that matches the object key in collectionA
+                      as: "employeeDetail"
                     }
                 }
             ]

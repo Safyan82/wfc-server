@@ -21,6 +21,11 @@ export class UserAccessService{
         return userLog;
     }
 
+    async getUsersAccessLogByEmpId(employeeId){
+        const userLog = await UserAccessModal.find({employeeId: new mongoose.Types.ObjectId(employeeId)});
+        return userLog;
+    }
+
     async deactiveSession(_id){
         await UserAccessModal.updateOne({_id},{$set:{isActive: false}});
         return {message:"Deactived Successfully"}

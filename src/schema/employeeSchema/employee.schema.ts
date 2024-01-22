@@ -3,14 +3,20 @@ import GraphQLJSON from "graphql-type-json";
 import { ObjectId } from "mongoose";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 
+class Branch {
+    @Field(()=>ID)
+    @Prop()
+    branch: ObjectId
+}
+
 @ObjectType()
 export class Employee{
     @Field(()=>ID)
     _id: string
 
-    @Field(()=>ID)
+    @Field(()=>GraphQLJSON)
     @Prop()
-    branch: ObjectId
+    branch: [Branch]
 
     @Field(()=>String)
     @Prop()
@@ -35,8 +41,8 @@ export class Employee{
 
 @InputType()
 export class EmployeeInput{
-    @Field(()=>String)
-    branch: string
+    @Field(()=>GraphQLJSON)
+    branch: any
     
     @Field(()=>String)
     firstname: string
