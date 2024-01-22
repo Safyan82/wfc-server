@@ -143,10 +143,10 @@ class UserService{
             const filter = {employeeId: employeeId};
             const update = {$set: {...rest, updatedAt: dayjs()}}
             const updatedUser = await UserModal.updateOne(filter, update);
-            if(input?.isManualPassword!=="0"){
-                const mail = new MailService();
-                await mail.sendMail(input?.email, input?.employeeId);
-            }
+            // if(input?.isManualPassword!=="0"){
+            //     const mail = new MailService();
+            //     await mail.sendMail(input?.email, input?.employeeId);
+            // }
             return{
                 message: "user updated successfully",
                 response: updatedUser
