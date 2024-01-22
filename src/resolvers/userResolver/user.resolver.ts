@@ -63,7 +63,7 @@ export default class UserResolver {
         }
     }
 
-    // @Authorized()
+    @Authorized()
     @Query(()=>UserReponse)
     getUserByEmpId(@Arg('employeeId', {validate: true}) employeeId: string){
         return this.userService.getUserByEmpId(employeeId);

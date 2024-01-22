@@ -42,7 +42,7 @@ export class userAccess{
 
 @ObjectType()
 export class userAccessResponse extends userAccess{
-    @Field(()=>GraphQLJSON)
+    @Field(()=>GraphQLJSON, {nullable: true})
     employee: any
 }
 

@@ -14,8 +14,18 @@ export class UserRoleResolver{
         return this.userRoleService.newUserRole(input)
     }
 
+    @Mutation(()=>userRoleResponse)
+    updateUserRole(@Arg('input', {validate: true}) input:userRoleInput){
+        return this.userRoleService.updateUserRole(input)
+    }
+
     @Query(()=>userRoleResponse)
     userRoleList(){
         return this.userRoleService.userRoleList();
+    }
+
+    @Query(()=>userRoleResponse)
+    userRoleById(@Arg('id') id:String){
+        return this.userRoleService.userRoleById(id);
     }
 }
