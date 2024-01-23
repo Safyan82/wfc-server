@@ -104,7 +104,20 @@ export class User{
     @Field(()=>String, {nullable: true})
     @prop()
     updatedAt?: string;
+    
+    @Field(()=>GraphQLJSON, {nullable: true})
+    @prop()
+    ip?: any;
 
+}
+
+@InputType()
+export class updateipInput{
+    @Field(()=>GraphQLJSON)
+    fieldset: any
+
+    @Field(()=>String)
+    employeeId: string
 }
 
 @ObjectType()
@@ -125,6 +138,7 @@ export class UserReponse{
 
 
 }
+
 
 @ObjectType()
 export class IsLoginResponse{
