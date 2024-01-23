@@ -65,22 +65,27 @@ class UserService{
             );
             const {userAccessType, userRole, permission, _id, userRolePermission, employeeDetail} = userDetail[0];
 
-            // log user access
-            const userAccessService = new UserAccessService();
-            const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3] || "86.23.81.228";
-           
-            const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
-            const locationData = response.data;
-            const deviceId = await userAccessService.newAccess({
-                ip: ipaddr,
-                userId: _id,
-                employeeId,
-                location: locationData.city,
-                platform: input?.platform
-            })
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
             if(isPasswordVerified){
+                
+                // log user access
+                const userAccessService = new UserAccessService();
+                const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3] || "86.23.81.228";
+            
+                const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
+                const locationData = response.data;
+                const deviceId = await userAccessService.newAccess({
+                    ip: ipaddr,
+                    userId: _id,
+                    employeeId,
+                    location: locationData.city,
+                    platform: input?.platform
+                })
+                // update last access column
+                await this.updateSingleFieldByEmpId({'lastActive': dayjs().format()}, employeeId)
+
+                // this block will run when user is create with pre-defined roles
                 if(userRolePermission?.length>0){
                     const token = sign({ employeeId, userAccessType, role: userRole, permission: userRolePermission[0]?.permission }, process.env.PRIVATEKEY, {expiresIn: "100 days"});
                     return {
@@ -100,6 +105,15 @@ class UserService{
             }
         }catch(err){
             throw new Error("Password is invaild")
+        }
+    }
+
+    async updateSingleFieldByEmpId(fieldset, employeeId){
+        await UserModal.updateOne({employeeId}, {$set:fieldset});
+        return{
+            success: 1,
+            response: {},
+            message: "Single field user is updated",
         }
     }
 
