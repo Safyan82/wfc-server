@@ -49,6 +49,10 @@ export class userInput{
     @Prop({required: false})
     platform?:any;
 
+    
+    @Field(()=>GraphQLJSON, {nullable: true})
+    @prop({required: false})
+    ip?: any;
 }
 
 @ObjectType()
