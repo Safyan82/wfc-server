@@ -59,8 +59,8 @@ export default class BranchService{
                 filters?.advanceFilter?.map((filter)=>{
                     filter?.map((filterDetail)=>{
                         
-                        const propName = filterDetail?.operator?.replaceAll(" ","").toLowerCase();
-                        
+                        const propName = filterDetail?.operator?.replace(/\s/g,"").toLowerCase();
+                        console.log(propName, "pppppp")
                         if(filterDetail.filter==="contain_exactly"){
                             if(propName=="branchname" || propName==="postcode"){
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
