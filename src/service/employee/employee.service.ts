@@ -66,7 +66,7 @@ export class EmployeeService {
 
             if(filters?.quickFilter){
                 Object.values(filters?.quickFilter)?.forEach((value, i)=>{
-                    if(value!=null){
+                    if(value){
                         matchStage.$match.$and.push({[Object.keys(filters?.quickFilter)[i]] : value})
                     }
                 });
@@ -76,7 +76,7 @@ export class EmployeeService {
                 filters?.advanceFilter?.map((filter)=>{
                     filter?.map((filterDetail)=>{
                         
-                        const propName = filterDetail?.operator?.replaceAll(" ","").toLowerCase();
+                        const propName = filterDetail?.operator?.replace(/\s/g,"").toLowerCase();
                         
                         if(filterDetail.filter==="contain_exactly"){
                             if(propName=="firstname" || propName==="lastname" || propName==="branchid"){
