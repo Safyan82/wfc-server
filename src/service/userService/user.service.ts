@@ -109,7 +109,7 @@ class UserService{
                 throw new Error("Password is invaild")
             }
         }catch(err){
-            throw new Error("Password is invaild")
+            throw new Error(err.message || "Password is invaild")
         }
     }
 
