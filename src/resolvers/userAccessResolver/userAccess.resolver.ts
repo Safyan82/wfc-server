@@ -25,4 +25,11 @@ export class UserAccessResolver{
     deactiveSession(@Arg('id') id:String ){
         return this.userAccessService.deactiveSession(id);
     }
+
+    @Authorized()
+    @Mutation(()=>DeactivedResponse)
+    logoutAllDevices(@Arg('employeeId') employeeId:String){
+        return this.userAccessService.logoutAllDevices(employeeId);
+    }
+
 }

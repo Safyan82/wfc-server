@@ -35,4 +35,19 @@ export class UserAccessService{
         const {isActive} = await UserAccessModal.findById(new mongoose.Types.ObjectId(_id));
         return isActive;
     }
+
+    async logoutAllDevices(employeeId){
+        try{
+            await UserAccessModal.updateMany({employeeId}, {$set:{isActive: false}}, {multi: true});
+            return{
+                message: "User all session terminated"
+            }
+        }
+        catch(err){
+            return {
+                message: err.message,
+
+            }
+        }
+    }
 }

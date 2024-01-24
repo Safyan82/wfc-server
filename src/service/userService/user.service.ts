@@ -39,6 +39,8 @@ class UserService{
     async verifyPassword(input, ctx){
         try{
             const {employeeId, password} = input;
+            const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3] || "127.0.0.1";
+
             const userDetail = await UserModal.aggregate([
                 {
                     $match:{
@@ -63,16 +65,19 @@ class UserService{
                 }
             ]
             );
-            const {userAccessType, userRole, permission, _id, userRolePermission, employeeDetail} = userDetail[0];
 
+            const {userAccessType, userRole, permission, _id, userRolePermission, employeeDetail, ip} = userDetail[0];
+
+            if(!ip.includes(ipaddr)){
+                throw new Error("Access is denied on thi IP");
+            }
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
             if(isPasswordVerified){
                 
                 // log user access
                 const userAccessService = new UserAccessService();
-                const ipaddr = ctx?.req.socket.remoteAddress.split(":")[3] || "86.23.81.228";
-            
+                
                 const response: AxiosResponse<any> = await axios.get(`https://ipinfo.io/${ipaddr}/json`);
                 const locationData = response.data;
                 const deviceId = await userAccessService.newAccess({
