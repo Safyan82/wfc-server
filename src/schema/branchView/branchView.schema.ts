@@ -82,6 +82,12 @@ export class BranchViewInput{
     _id?: string
 
     
+    @Field(()=>String, {nullable: true})
+    createdBy?: string
+
+
+    @Field(()=>String, {nullable: true})
+    updatedBy?: string
 
 }
 

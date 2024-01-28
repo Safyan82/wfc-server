@@ -4,8 +4,9 @@ import { BranchViewInput, BranchViewModal } from "../../schema/branchView/branch
 export class BranchViewService {
     async createBranchView(input: BranchViewInput){
         try{
-            await BranchViewModal.create({...input, createdDate: dayjs().format('YYYY-MM-DD')})
+            const branchView = await BranchViewModal.create({...input, createdDate: dayjs().format('YYYY-MM-DD')})
             return {
+                response: branchView,
                 message: "Branch view created successfully",
                 success: 1,
             }
@@ -17,8 +18,9 @@ export class BranchViewService {
 
     async updateBranchView(input){
         try{
-            await BranchViewModal.updateOne({_id: input?._id}, {...input, updatedDate: dayjs().format('YYYY-MM-DD')});
+            const updatedBranchView = await BranchViewModal.updateOne({_id: input?._id}, {...input, updatedDate: dayjs().format('YYYY-MM-DD')});
             return {
+                response : updatedBranchView,
                 success: 1,
                 message: "View updated successfully",
             }
