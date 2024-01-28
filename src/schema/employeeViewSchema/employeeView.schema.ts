@@ -82,6 +82,13 @@ export class EmployeeViewInput{
     _id?: string
 
     
+    @Field(()=>String, {nullable: true})
+    createdBy?: string
+
+
+    @Field(()=>String, {nullable: true})
+    updatedBy?: string
+
 
 }
 

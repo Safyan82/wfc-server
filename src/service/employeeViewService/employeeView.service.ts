@@ -66,15 +66,17 @@ export class EmployeeViewService{
             const isExist = await EmployeeViewModal.findById(input?._id);
             if(isExist &&  input?._id){
                 const {createdBy, ...rest} = input;
-                await EmployeeViewModal.updateOne({_id: input?._id}, {...rest, updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+                const empView = await EmployeeViewModal.updateOne({_id: input?._id}, {...rest, updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
                 return {
+                    response: empView,
                     success: 1,
                     message: "Your custom view is updated successfully",
                 }
             }else{  
-                await EmployeeViewModal.create({...input, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+                const employeeView = await EmployeeViewModal.create({...input, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
                 return {
                     success: 1,
+                    response: employeeView,
                     message: "Your custom view is added successfully",
                 }
             }
