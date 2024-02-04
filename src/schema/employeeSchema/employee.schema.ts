@@ -1,4 +1,4 @@
-import { Prop, getModelForClass } from "@typegoose/typegoose";
+import { Index, Prop, getModelForClass } from "@typegoose/typegoose";
 import GraphQLJSON from "graphql-type-json";
 import { ObjectId } from "mongoose";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
