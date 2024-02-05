@@ -50,4 +50,12 @@ export class UserAccessService{
             }
         }
     }
+
+    async getActiveDevice(userId){
+        try{
+            return await UserAccessModal.distinct("ip",{userId});
+        }catch(err){
+            throw new Error(err.message);
+        }
+    }
 }

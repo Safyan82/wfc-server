@@ -17,7 +17,7 @@ export class userAccess{
     @Prop()
     userId: ObjectId
 
-    @Field(()=>String)
+    @Field(()=>String,{nullable: true})
     @Prop()
     ip: string
 
