@@ -53,7 +53,7 @@ export class UserAccessService{
 
     async getActiveDevice(userId){
         try{
-            return await UserAccessModal.distinct("ip",{userId});
+            return await UserAccessModal.distinct("ip",{userId, isActive: true});
         }catch(err){
             throw new Error(err.message);
         }
