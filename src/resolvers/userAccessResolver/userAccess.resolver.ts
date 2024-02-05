@@ -26,6 +26,12 @@ export class UserAccessResolver{
         return this.userAccessService.deactiveSession(id);
     }
 
+    @Query(()=>[userAccessResponse])
+    getActiveDevice(@Arg('userId') userId:String){
+        return this.userAccessService.getActiveDevice(userId)
+    }
+
+
     @Authorized()
     @Mutation(()=>DeactivedResponse)
     logoutAllDevices(@Arg('employeeId') employeeId:String){
