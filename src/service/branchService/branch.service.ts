@@ -4,7 +4,9 @@ import { BranchPropertyHistoryService } from "../branchPropertyHistoryService/br
 import mongoose from "mongoose";
 import { extractPermittedProps } from "../../utils/permissionPower/extractPermittedProps";
 import { objectTypeList } from "../../utils/objectype";
+import { BranchObjectService } from "../branchObjectService/branchObject.service";
 export default class BranchService{
+
     async createBranch(input: createBranchInput){
         try{
             const createdDate = dayjs().format('YYYY-MM-DD');
@@ -283,4 +285,41 @@ export default class BranchService{
             }
         }
     }
+
+    async searchBranch(ctx, query){
+        const branchResult = await BranchModal.aggregate([{$match:{branchname: {$regex:"^"+query, $options: "i" }}}]);
+        if(branchResult?.length>0){
+            const branchObjectService = new BranchObjectService();
+            const branchObject = await branchObjectService.branchObject(ctx);
+            const columns = branchObject?.response?.map((branch)=> {
+                return {
+                    title: branch?.propertyDetail?.label,
+                    dataIndex: branch?.propertyDetail?.label?.toLowerCase("")?.replace(/\s/g,""),
+                }
+            });
+            
+            const data = branchResult?.map((branch)=>{
+                const {metadata, ...rest} = branch;
+                const metadataExtracted = metadata && Object.keys(metadata)?.map((prop)=>{
+                    return{
+                        [prop]: metadata[prop]
+                    }
+                });
+                if(metadataExtracted?.length>0){
+
+                    return {
+                        ...rest,
+                        ...metadataExtracted[0],
+                    }
+                }else{
+                    return{
+                        ...rest
+                    }
+                }
+            });
+            return {columns:[...columns,{title:'Created At', dataIndex:'createdDate'}], data};
+        }
+        return;
+    }
+
 }   

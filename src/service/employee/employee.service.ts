@@ -7,6 +7,8 @@ import { extractPermittedProps } from "../../utils/permissionPower/extractPermit
 import { convertArrayToObject } from "../../utils/convertArrayToObject/convertArrayToObject";
 import { UserModal } from "../../schema/userSchema/user.schema";
 import { MailService } from "../mailService/mail.service";
+import { EmployeeObject } from "../../schema/employeeObjectSchema/employeeObject.Schema";
+import { EmployeeObjectService } from "../employeeObjectService/employeeObject.service";
 export class EmployeeService {
     async addEmployee(input){
         try{
@@ -374,4 +376,66 @@ export class EmployeeService {
         }
     }
 
+    async searchEmployee(ctx, query){
+        const employeeResult = await employeeModal.aggregate([
+            {
+                $match:{
+                    $or:[
+                        {firstname: {$regex:"^"+query, $options: "i" }},
+                        {lastname: {$regex:"^"+query, $options: "i" }},
+                        {email: {$regex:"^"+query, $options: "i" }},
+                        {'metadata.email': {$regex:"^"+query, $options: "i" }},
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "branches",
+                    localField: "branch",
+                    foreignField: "_id",
+                    as: "branch"
+                }
+            },
+        ]);
+
+        if(employeeResult?.length>0){
+            
+            const employeeObjectService = new EmployeeObjectService(); 
+            const employeeObject = await employeeObjectService.employeeObject(ctx);
+            const columns = employeeObject?.response?.map((emp)=> {
+                return {
+                    title: emp?.propertyDetail?.label,
+                    dataIndex: emp?.propertyDetail?.label?.toLowerCase("")?.replace(/\s/g,""),
+                }
+            });
+            const data = employeeResult?.map((emp)=>{
+                const {metadata, ...rest} = emp;
+                const metadataExtracted = metadata && Object.keys(metadata)?.map((prop)=>{
+                    return{
+                        [prop]: metadata[prop]
+                    }
+                });
+                if(metadataExtracted?.length>0){
+
+                    return {
+                        ...rest,
+                        branch: emp?.branch?.map((branch)=>branch?.branchname).join(" "),
+                        ...(metadataExtracted[0]),
+                    }
+                }else{
+                    
+                    return {
+                        ...rest,
+                        branch: emp?.branch?.map((branch)=>branch?.branchname).join(" ")
+                    }
+                }
+            });
+
+            return {
+                columns:[...columns,{title:'Created At', dataIndex:'createdAt'}], data
+            }
+        }else{
+            return
+        }
+    }
 }

@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from "type-graphql";
 import GraphQLJSON from 'graphql-type-json';
-import { Prop, getModelForClass, prop } from "@typegoose/typegoose";
+import { Prop, getModelForClass, index, prop } from "@typegoose/typegoose";
 import { MinLength } from "class-validator";
 import { Date } from "mongoose";
 
@@ -92,5 +92,6 @@ export class BulkBranchUpdateInput{
     @Field(()=>GraphQLJSON)
     _ids: any
 }
+
 
 export const BranchModal = getModelForClass(Branch);

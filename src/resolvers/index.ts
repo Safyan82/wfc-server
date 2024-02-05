@@ -12,6 +12,8 @@ import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
+import { SearchResolver } from "./searchResolver/search.resolver";
+import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
 import { UserAccessResolver } from "./userAccessResolver/userAccess.resolver";
 import UserResolver from "./userResolver/user.resolver";
 import { UserRoleResolver } from "./userRoleResolver/userRole.resolver";
@@ -34,5 +36,7 @@ export const resolvers = [
     EmployeeDetailViewResolver,
     EmployeePropertyHistoryResolver,
     UserRoleResolver,
-    UserAccessResolver
+    UserAccessResolver,
+    SearchResolver,
+    selectedSearchResolver,
 ] as const
