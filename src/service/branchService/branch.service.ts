@@ -213,7 +213,7 @@ export default class BranchService{
         }
     }
 
-    async updateBranch(input){
+    async updateBranch(input, ctx){
         try{
             const {_id, ...rest} = input;
             
@@ -226,12 +226,14 @@ export default class BranchService{
                 if(prop.metadata){
                     data.$set[`metadata.${prop.name}`]=prop.value;
                     if(Object.keys(branchData.metadata).includes(prop.name)){
-                        await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData.metadata[prop?.name], _id);
+                        await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
+                        // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData.metadata[prop?.name], _id);
                     }
                 }else{
                     data.$set[prop.name] = prop.value;
                     if(Object.keys(branchData).includes(prop.name)){
-                        await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData[prop?.name], _id);
+                        await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
+                        // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData[prop?.name], _id);
                     }
                 }
             });
