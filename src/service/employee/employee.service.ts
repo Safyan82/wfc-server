@@ -274,7 +274,7 @@ export class EmployeeService {
         }
     }
 
-    async updateEmployee(input){
+    async updateEmployee(input, ctx){
         try{
             const {_id, ...rest} = input;
             const branch = input?.branch?.map((bran)=> new mongoose.Types.ObjectId(bran))
@@ -288,19 +288,19 @@ export class EmployeeService {
                 if(prop.metadata){
                     data.$set[`metadata.${prop.name}`]=prop.value;
                     if(Object.keys(employeeData.metadata).includes(prop.name)){
-                        await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData.metadata[prop?.name], _id);
+                        await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, prop?.value, _id, ctx?.user?.employeeId);
                     }
                 }else{
                     if(prop.name=="branch"){
                         console.log(prop.value?.map((propIds)=>new mongoose.Types.ObjectId(propIds?.id)), "proppp")
                         data.$set[prop.name] = prop.value?.map((propIds)=>new mongoose.Types.ObjectId(propIds?.id));
                         if(Object.keys(employeeData).includes(prop.name)){
-                            await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData[prop?.name], _id);
+                            await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, prop?.value, _id, ctx?.user?.employeeId);
                         }
                     }else{
                         data.$set[prop.name] = prop.value;
                         if(Object.keys(employeeData).includes(prop.name)){
-                            await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, employeeData[prop?.name], _id);
+                            await employeePropertyHistory.createPropertyHistoryRecord(prop?.propertyId, prop?.value, _id, ctx?.user?.employeeId);
                         }
                     }
                 }

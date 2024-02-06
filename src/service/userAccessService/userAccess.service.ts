@@ -53,7 +53,14 @@ export class UserAccessService{
 
     async getActiveDevice(userId){
         try{
-            return await UserAccessModal.distinct("ip",{userId, isActive: true});
+            const activeDevices = await UserAccessModal.aggregate(
+                [
+                    {
+                        $match: { userId: new mongoose.Types.ObjectId(userId),  isActive: true } // Replace 'your_user_id_here' with the actual userId you're searching for.
+                    }                 
+                ]
+            );
+            return activeDevices;
         }catch(err){
             throw new Error(err.message);
         }

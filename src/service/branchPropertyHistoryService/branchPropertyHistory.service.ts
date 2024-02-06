@@ -3,9 +3,9 @@ import { BranchPropertyHistoryModal } from "../../schema/branchPropertyHistorySc
 import mongoose from "mongoose";
 
 export class BranchPropertyHistoryService{
-    async createBranchPropertyHistoryRecord(propertyId, value, branchId){
+    async createBranchPropertyHistoryRecord(propertyId, value, branchId, createdBy){
         try{
-            await BranchPropertyHistoryModal.create({branchId, propertyId, value, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+            await BranchPropertyHistoryModal.create({branchId, propertyId, value, createdBy, createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
             return true;
         }
         catch(err){
@@ -37,6 +37,14 @@ export class BranchPropertyHistoryService{
                   }
                 },
                 {
+                  $lookup: {
+                    from: "employees",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "sourceDetail"
+                  }
+                },
+                {
                   $unwind: "$propertyDetail"
                 },
                 {
@@ -51,12 +59,14 @@ export class BranchPropertyHistoryService{
                     "propertyDetail.label": 1,
                     "propertyDetail.rules": 1,
                     "propertyDetail.fieldType": 1,
+                    "sourceDetail.firstname":1,
+                    "sourceDetail.lastname":1,
                   }
                 },
                 
             ]);
             // const branchObjectData = await BranchPropertyHistoryModal.find({propertyId})
-            return {success: 1, response: branchObjectData}
+            return {success: 1, response: branchObjectData.reverse()}
         }
         catch(err){
             return {
@@ -90,6 +100,14 @@ export class BranchPropertyHistoryService{
               }
             },
             {
+              $lookup: {
+                from: "employees",
+                localField: "createdBy",
+                foreignField: "_id",
+                as: "sourceDetail"
+              }
+            },
+            {
               $unwind: "$propertyDetail"
             },
             {
@@ -104,12 +122,14 @@ export class BranchPropertyHistoryService{
                 "propertyDetail.label": 1,
                 "propertyDetail.rules": 1,
                 "propertyDetail.fieldType": 1,
+                "sourceDetail.firstname":1,
+                "sourceDetail.lastname":1,
               }
             },
             
         ]);
         // const branchObjectData = await BranchPropertyHistoryModal.find({propertyId})
-        return {success: 1, response: branchObjectData}
+        return {success: 1, response: branchObjectData?.reverse()}
       }
       catch(err){
           return {

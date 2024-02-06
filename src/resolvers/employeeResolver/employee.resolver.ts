@@ -36,9 +36,10 @@ export class EmployeeResolver{
         return this.employeeService.singleEmployee(_id);
     }
 
+    @Authorized()
     @Mutation(()=>EmployeeGenericResponse)
-    updateEmployee(@Arg('input', {validate: true}) input:EmployeeUpdateInput ){
-        return this.employeeService.updateEmployee(input);
+    updateEmployee(@Ctx() ctx:Context, @Arg('input', {validate: true}) input:EmployeeUpdateInput ){
+        return this.employeeService.updateEmployee(input, ctx);
     }
 
     @Mutation(()=>EmployeeGenericResponse)

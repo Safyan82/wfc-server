@@ -22,7 +22,7 @@ export class BranchPropertyHistory {
 
     @Field(()=>String)
     @Prop()
-    createdBy: string
+    createdBy: ObjectId
 
     @Field(()=>String)
     @Prop()

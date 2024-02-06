@@ -68,9 +68,9 @@ class UserService{
 
             const {userAccessType, userRole, permission, _id, userRolePermission, employeeDetail, ip} = userDetail[0];
 
-            // if(ip && ip?.length>0 && !ip.includes(ipaddr)){
-            //     throw new Error("Access is denied on this IP");
-            // }
+            if(ip && ip?.length>0 && !ip.includes(ipaddr)){
+                throw new Error("Access is denied on this IP");
+            }
 
             const isPasswordVerified= await bcrypt.compare(password, userDetail[0].password);
             if(isPasswordVerified){

@@ -22,7 +22,7 @@ export class EmployeePropertyHistory {
 
     @Field(()=>String)
     @Prop()
-    createdBy: string
+    createdBy: ObjectId
 
     @Field(()=>String)
     @Prop()

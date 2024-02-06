@@ -27,9 +27,10 @@ export default class BranchResolver {
         return this.branchService.branch(_id)
     }
 
+    @Authorized()
     @Mutation(()=>BranchGenericResponse)
-    updateBranch(@Arg('input', {validate: true}) input:BranchUpdateInput ){
-        return this.branchService.updateBranch(input);
+    updateBranch(@Ctx() ctx:Context ,@Arg('input', {validate: true}) input:BranchUpdateInput ){
+        return this.branchService.updateBranch(input, ctx);
     }
 
     @Mutation(()=>BranchGenericResponse)

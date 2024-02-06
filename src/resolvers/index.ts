@@ -14,6 +14,7 @@ import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
+import { ThemeResolver } from "./themeResolver/theme.resolver";
 import { UserAccessResolver } from "./userAccessResolver/userAccess.resolver";
 import UserResolver from "./userResolver/user.resolver";
 import { UserRoleResolver } from "./userRoleResolver/userRole.resolver";
@@ -39,4 +40,5 @@ export const resolvers = [
     UserAccessResolver,
     SearchResolver,
     selectedSearchResolver,
+    ThemeResolver
 ] as const
