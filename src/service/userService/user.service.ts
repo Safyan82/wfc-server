@@ -237,6 +237,14 @@ class UserService{
         }
     }
 
+    async deleteUser(_id){
+        await UserModal.deleteOne({_id})
+        return {
+            success:1,
+            message: "User deleted successfully",
+        }
+    }
+
 
 }
 

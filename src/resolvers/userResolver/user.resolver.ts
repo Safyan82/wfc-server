@@ -81,4 +81,8 @@ export default class UserResolver {
         return this.userService.updateSingleFieldByEmpId(input.fieldset, input.employeeId);
     }
 
+    @Mutation(()=>UserReponse)
+    deleteUser(@Arg('id') id:String){
+        return this.userService.deleteUser(id);
+    }
 }
