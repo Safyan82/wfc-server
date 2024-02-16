@@ -55,6 +55,14 @@ export class PropertiesService{
                 }
             },
             {
+                $lookup:{
+                    from: "groups",
+                    localField: "groupId",
+                    foreignField: "_id",
+                    as: "groupDetail"
+                }
+            },
+            {
               $group: {
                 _id: "$groupName", // Replace "groupingField" with the field you want to group by
                 properties: { $push: "$$ROOT" }

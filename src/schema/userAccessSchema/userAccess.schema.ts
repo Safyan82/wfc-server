@@ -9,11 +9,11 @@ export class userAccess{
     @Field(()=>ID)
     _id: string
 
-    @Field(()=>String)
+    @Field(()=>String,{nullable:true})
     @Prop()
     employeeId: ObjectId
 
-    @Field(()=>String)
+    @Field(()=>String,{nullable:true})
     @Prop()
     userId: ObjectId
 
@@ -21,12 +21,12 @@ export class userAccess{
     @Prop()
     ip: string
 
-    @Field(()=>GraphQLJSON)
+    @Field(()=>GraphQLJSON,{nullable:true})
     @Prop()
     location: any
 
     
-    @Field(()=>String)
+    @Field(()=>String,{nullable:true})
     @Prop({default: dayjs().format('DD-MM-YYYY HH:mm:ss')})
     accessedAt: string
 

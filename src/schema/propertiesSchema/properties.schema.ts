@@ -24,7 +24,7 @@ export class Properties{
     
     @Field(()=>String,{nullable: true})
     @Prop()
-    groupId?: string
+    groupId?: ObjectId
 
     @Field(()=>String,{nullable: true})
     @Prop()

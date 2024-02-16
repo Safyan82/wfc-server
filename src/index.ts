@@ -12,7 +12,8 @@ import { authCheckerMiddleware } from './utils/middleware/authVerification.middl
 import { Context } from './utils/context';
 import jwt from 'jsonwebtoken';
 import UserService from './service/userService/user.service';
-
+import { WebSocketServer } from "ws";
+import http from 'http';
 // import { consumer } from './utils/kafka';
 
 
@@ -93,9 +94,32 @@ async function bootstrap(){
   // apply Express as middleware to apollo server
   server.applyMiddleware({app});
 
+  // create websocket along graphql server side by side
+  const httpServer = http.createServer(app);
+  const wsServer = new WebSocketServer({ server: httpServer });
+  // websocket Implementation 
+  wsServer.on('connection', (ws) => {
+    // Handle WebSocket connection, messages, etc.
+    console.log('WebSocket connection established for');
+    ws.on("hello",(arg)=>{
+      console.log("Hello triggered", arg);
+    });
+
+
+    ws.on('message', (message, arg2) => {
+      console.log('Received:', message);
+      // Handle incoming WebSocket messages
+    });
+
+    ws.on('close', () => {
+      console.log('WebSocket connection closed');
+      // Handle connection closure
+    });
+
+  });
 
   // start express server on set port 
-  app.listen({port: process.env.PORT}, () => console.log(`server is up on port ${process.env.PORT}`));
+  httpServer.listen({port: process.env.PORT}, () => console.log(`server is up on port ${process.env.PORT}`));
 
   // generate connection on the base of Uri 
   connection();

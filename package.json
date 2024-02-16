@@ -36,7 +36,7 @@
     "@typegoose/typegoose": "^11.2.0",
     "apollo-server": "^3.12.0",
     "apollo-server-express": "^3.12.0",
-    "axios": "^1.6.4",
+    "axios": "^1.6.7",
     "bcrypt": "^5.1.0",
     "class-validator": "^0.14.0",
     "config": "^3.3.9",
@@ -56,6 +56,7 @@
     "nodemailer": "^6.9.8",
     "nodemailer-smtp-transport": "^2.7.4",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^2.0.0-beta.2"
+    "type-graphql": "^2.0.0-beta.2",
+    "ws": "^8.16.0"
   }
 }
