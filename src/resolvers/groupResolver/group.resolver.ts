@@ -29,4 +29,6 @@ export class GroupResolver{
         return this.groupService.groupList(objectType);
     }
 
+    
+
 }

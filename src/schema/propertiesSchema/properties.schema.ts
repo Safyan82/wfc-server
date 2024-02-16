@@ -24,7 +24,7 @@ export class Properties{
     
     @Field(()=>String,{nullable: true})
     @Prop()
-    groupId?: string
+    groupId?: ObjectId
 
     @Field(()=>String,{nullable: true})
     @Prop()
@@ -61,11 +61,11 @@ export class Properties{
 
     @Field(()=>ID, {nullable: true})
     @Prop()
-    createdBy?: string
+    createdBy?: ObjectId
 
     @Field(()=>ID,{nullable: true})
     @Prop()
-    updatedBy?: string
+    updatedBy?: ObjectId
 
     @Field(()=>Boolean,{nullable:true})
     @Prop()

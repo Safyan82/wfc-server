@@ -1,6 +1,7 @@
 import { GroupInput, GroupModal } from "../../schema/groupSchema/group.schema";
 import dayjs from 'dayjs';
 import { PropertiesService } from "../propertiesService/properties.service";
+import { TabsService } from "../tabsService/tabs.service";
 
 export class GroupService{
     async createGroup(input: GroupInput){
@@ -10,7 +11,11 @@ export class GroupService{
             if(isExist){
                 throw new Error("Group already exist");
             }
-            await GroupModal.create({...input, properties:0, createdAt: dayjs() })
+            const grp = await GroupModal.create({...input, properties:0, createdAt: dayjs() });
+
+            // const tabServices = new TabsService();
+            // await tabServices.updateTab(grp?._id, grp?.tabs);
+
             return {
                 message: "Group added",
                 success: 1,
@@ -27,6 +32,10 @@ export class GroupService{
             const propertyService = new PropertiesService();
             await propertyService.updatePropertiesByGroupId(_id, rest.name)
             await GroupModal.updateOne({_id},{...rest, updatedAt: dayjs()});
+            
+            // const tabServices = new TabsService();
+            // await tabServices.updateTab(_id, rest?.tabs);
+
             return {
                 message: "Group was updated",
                 success: 1,
@@ -86,13 +95,23 @@ export class GroupService{
                     }
                 },
                 {
+                    $lookup:{
+                        from: "properties",
+                        localField: "_id",
+                        foreignField: "groupId",
+                        as: "propertyList"
+                    }
+                },
+
+                {
                     $project: {
                       key: "$_id",
                       _id: 1,
                       // Include other fields if needed
                       name: 1,
                       properties:1,
-
+                      tabs:1,
+                      propertyList: 1,
                     }
                 }
             ]);

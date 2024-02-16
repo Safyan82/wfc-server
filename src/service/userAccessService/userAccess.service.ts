@@ -53,13 +53,18 @@ export class UserAccessService{
 
     async getActiveDevice(userId){
         try{
-            const activeDevices = await UserAccessModal.aggregate(
-                [
-                    {
-                        $match: { userId: new mongoose.Types.ObjectId(userId),  isActive: true } // Replace 'your_user_id_here' with the actual userId you're searching for.
-                    }                 
-                ]
-            );
+            const activeDevices = await UserAccessModal.aggregate([
+                {$match: { employeeId: new mongoose.Types.ObjectId(userId) }},
+                {
+                  $group: {
+                    _id: "$ip", // Group by the IP address field
+                    doc: { $first: "$$ROOT" } // Store the first document in each group
+                  }
+                },
+                {
+                  $replaceRoot: { newRoot: "$doc" } // Replace the root with the first document in each group
+                }
+              ])
             return activeDevices;
         }catch(err){
             throw new Error(err.message);

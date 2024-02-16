@@ -5,10 +5,11 @@ import { GroupModal } from "../../schema/groupSchema/group.schema";
 import { BranchObjectService } from "../branchObjectService/branchObject.service";
 import { EmployeeObjectService } from "../employeeObjectService/employeeObject.service";
 import { objectTypeList } from "../../utils/objectype";
+import { Context } from "../../utils/context";
 
 export class PropertiesService{
     
-    async createProperties(input:PropertiesInput){
+    async createProperties(input:PropertiesInput, ctx:Context){
         try{
             const groupService = new GroupService();
             const branchObjectService = new BranchObjectService();
@@ -16,7 +17,7 @@ export class PropertiesService{
 
             const generatedPropert = await PropertiesModal.create({...input, 
                 isDelete: 0,
-                isArchive:0, useIn:0 ,createdAt: dayjs()});
+                isArchive:0, useIn:0 ,createdAt: dayjs(), createdBy: ctx?.user?._id});
             
             await groupService.updateNumberOfProperties(input.groupId);
             if(input?.rules?.ownedby){
@@ -52,6 +53,14 @@ export class PropertiesService{
                         {isDelete: {$eq: false}},
                         {objectType: objectType},
                     ]
+                }
+            },
+            {
+                $lookup:{
+                    from: "groups",
+                    localField: "groupId",
+                    foreignField: "_id",
+                    as: "groupDetail"
                 }
             },
             {
@@ -509,6 +518,18 @@ export class PropertiesService{
             await PropertiesModal.updateOne({_id:propertyId},{$set:{useIn}})
         }
         catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+
+    // get props with their owner to allow access
+    async getOwnedProp(createdBy, objectType){
+        try{
+            const ownedProps = await PropertiesModal.find({createdBy, objectType});
+            const ownedPropsIds = await ownedProps?.map((prop)=>prop._id);
+            return ownedPropsIds;
+        }catch(err){
             throw new Error(err.message);
         }
     }

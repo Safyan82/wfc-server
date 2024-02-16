@@ -3,6 +3,7 @@ import { employeeObjectModal } from "../../schema/employeeObjectSchema/employeeO
 import { PropertiesService } from "../propertiesService/properties.service";
 import { objectTypeList } from "../../utils/objectype";
 import { extractPermittedPropIds } from "../../utils/permissionPower/extractPermittedProps";
+import mongoose from "mongoose";
 
 
 export class EmployeeObjectService{
@@ -132,8 +133,25 @@ export class EmployeeObjectService{
     async employeeObject(ctx){
         try{
 
+            // get all owned Props by particular requesting user
+            
+            const propService = new PropertiesService();
+
+            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Employee);
+
+            // terminate all owned props
+
+
             const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Employee) || [];
-            console.log(Permittedproperties, "pop")
+            // get all the created properties that are not in list of permitted properties
+            // case 1;  in created properties there can be permitted props
+            // case 2;  props can be created after the user created for the particulat object type
+            const getNewlyCreatedProps = ownedProp?.filter((ownedProp)=>
+                Permittedproperties.find((permittedProp)=>new mongoose.Types.ObjectId(permittedProp) !== new mongoose.Types.ObjectId(ownedProp))
+            );
+            
+            const extendedPermittedProperties = [...Permittedproperties, ...getNewlyCreatedProps];
+            
             let matchStage = {
                 $match: {
                     $and: [
@@ -148,7 +166,7 @@ export class EmployeeObjectService{
 
             if(Permittedproperties?.length>0){
                 matchStage.$match.$and.push({
-                    propertyId: {$in: Permittedproperties}
+                    propertyId: {$in: extendedPermittedProperties}
                 })
             }
             

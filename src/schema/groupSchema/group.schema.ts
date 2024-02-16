@@ -1,4 +1,5 @@
 import { Prop, getModelForClass } from "@typegoose/typegoose";
+import GraphQLJSON from "graphql-type-json";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -21,6 +22,13 @@ export class Group{
     @Field(()=>String)
     @Prop()
     objectType: string
+
+    @Field(()=>GraphQLJSON,{nullable: true})
+    @Prop()
+    tabs?: any
+
+    @Field(()=>GraphQLJSON)
+    propertyList: any
 
     @Field(()=>String)
     @Prop()
@@ -65,6 +73,9 @@ export class GroupInput{
 
     @Field(()=>String,{nullable: true})
     objectType?: string
+
+    @Field(()=>GraphQLJSON,{nullable: true})
+    tabs?: any
 
     @Field(()=>String, {nullable: true})
     createdBy?: string
