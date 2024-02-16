@@ -1,6 +1,7 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { PropertiesService } from "../../service/propertiesService/properties.service";
 import { ArchivePropertyInput, BulkPropertiesArchive, BulkPropertiesDelete, GenericProperty, GenericPropertyResponse, MoveGroupInput, Properties, PropertiesInput, PropertyWithFilterInput } from "../../schema/propertiesSchema/properties.schema";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export class PropertiesResolver{
@@ -9,9 +10,10 @@ export class PropertiesResolver{
         this.propertiesService = new PropertiesService()
     }
 
+    @Authorized()
     @Mutation(()=>GenericPropertyResponse)
-    createProperty(@Arg('input', {validate: true}) input: PropertiesInput){
-        return this.propertiesService.createProperties(input);
+    createProperty(@Ctx() ctx:Context ,@Arg('input', {validate: true}) input: PropertiesInput){
+        return this.propertiesService.createProperties(input, ctx);
     }
 
     @Mutation(()=>GenericPropertyResponse)
