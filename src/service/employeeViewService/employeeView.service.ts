@@ -66,7 +66,7 @@ export class EmployeeViewService{
             const isExist = await EmployeeViewModal.findById(input?._id);
             if(isExist &&  input?._id){
                 const {createdBy, ...rest} = input;
-                const empView = await EmployeeViewModal.updateOne({_id: input?._id}, {...rest, updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+                const empView = await EmployeeViewModal.updateOne({_id: input?._id}, {...rest, updatedAt: dayjs()});
                 return {
                     response: empView,
                     success: 1,
@@ -95,7 +95,7 @@ export class EmployeeViewService{
     async updateEmployeeView(input){
         try{
             
-            const employee = await EmployeeViewModal.updateOne({_id: input?._id}, {...input, updatedDate: dayjs().format('YYYY-MM-DD')});
+            const employee = await EmployeeViewModal.updateOne({_id: input?._id}, {...input, updatedAt: dayjs()});
             return {
                 success: 1,
                 response: employee,
