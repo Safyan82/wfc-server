@@ -1,6 +1,7 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { EmployeeViewDefaultResponse, EmployeeViewInput } from "../../schema/employeeViewSchema/employeeView.schema";
 import { EmployeeViewService } from "../../service/employeeViewService/employeeView.service";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export class EmployeeViewResolver{
@@ -8,9 +9,11 @@ export class EmployeeViewResolver{
         this.employeeViewService = new EmployeeViewService();
     }
 
+    @Authorized()
     @Query(()=>EmployeeViewDefaultResponse)
-    employeeView(){
-        return this.employeeViewService.getEmployeeView();
+    employeeView(@Ctx() ctx:Context){
+        const {_id} = ctx?.user;
+        return this.employeeViewService.getEmployeeView(_id);
     }
 
     @Mutation(()=> EmployeeViewDefaultResponse)

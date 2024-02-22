@@ -1,6 +1,7 @@
-import { Arg, Args, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { BranchView, BranchViewDefaultResponse, BranchViewInput } from "../../schema/branchView/branchView.schema";
 import { BranchViewService } from "../../service/branchViewService/branchView.service";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export default class BranchViewResolver{
@@ -19,9 +20,11 @@ export default class BranchViewResolver{
         return this.branchViewService.updateBranchView(input);
     }
 
+    @Authorized()
     @Query(()=>[BranchView])
-    async branchViews(){
-        return this.branchViewService.branchView();
+    async branchViews(@Ctx() ctx:Context){
+        const {_id} = ctx?.user;
+        return this.branchViewService.branchView(_id);
     }
 
     @Query(()=>BranchView)

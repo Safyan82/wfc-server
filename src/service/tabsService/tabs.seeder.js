@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-mongoose.connect('mongodb://localhost:27017/wfcDev',{});
+mongoose.connect('mongodb://safyan:2015-ag-5563@134.209.22.223:27017/wfcDev?authSource=wfcDev',{});
 
 const TabsSchema = new mongoose.Schema({
     tab: String,

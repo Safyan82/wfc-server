@@ -20,7 +20,8 @@ export class GroupResolver{
     }
 
     @Mutation(()=>createGroupResponse)
-    deleteGroup(@Arg('id', {validate: true}) id: string, @Arg('groupIdToMoveIn', {validate: true}) groupIdToMoveIn: string){
+    deleteGroup(@Arg('id', {validate: true}) id: string, @Arg('groupIdToMoveIn', {nullable: true}) groupIdToMoveIn: string){
+        console.log(id, groupIdToMoveIn)
         return this.groupService.deleteGroup(id, groupIdToMoveIn);
     }
 
