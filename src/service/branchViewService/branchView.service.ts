@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { BranchViewInput, BranchViewModal } from "../../schema/branchView/branchView.schema";
+import mongoose from "mongoose";
 
 export class BranchViewService {
     async createBranchView(input: BranchViewInput){
@@ -30,9 +31,19 @@ export class BranchViewService {
         }
     }
 
-    async branchView(){
+    async branchView(_id){
         try{
-            const branchViewResponse = await BranchViewModal.find();
+            console.log(_id.toString(), "userId")
+            const branchViewResponse = await BranchViewModal.aggregate([
+                {
+                    $match:{
+                     $or:[
+                       {createdBy: _id.toString()},
+                       {visibility: "public"}
+                     ]   
+                    }
+                }
+            ]);
             console.log(branchViewResponse);
             return branchViewResponse;
         }

@@ -2,6 +2,7 @@ import { GroupInput, GroupModal } from "../../schema/groupSchema/group.schema";
 import dayjs from 'dayjs';
 import { PropertiesService } from "../propertiesService/properties.service";
 import { TabsService } from "../tabsService/tabs.service";
+import mongoose from "mongoose";
 
 export class GroupService{
     async createGroup(input: GroupInput){
@@ -56,14 +57,18 @@ export class GroupService{
             throw new Error(err);
         }
     }
-    async deleteGroup(_id:string, groupIdToMoveIn:string){
+    async deleteGroup(id:string, groupIdToMoveIn:string){
         try{
-            const propertyService = new PropertiesService();
-            const properties = await propertyService.getPropertyByGroupId(_id);
-            const newGroupName = await this.findGroupNameById(groupIdToMoveIn);
-            await propertyService.updatePropertiesGroup(groupIdToMoveIn, _id, newGroupName);
-            const alreadyInUse = await this.findGroupById(groupIdToMoveIn);
-            await GroupModal.updateOne({_id: groupIdToMoveIn},{properties: (Number(properties.length)+Number(alreadyInUse)) })
+            const _id = new mongoose.Types.ObjectId(id);
+            if(groupIdToMoveIn){
+
+                const propertyService = new PropertiesService();
+                const properties = await propertyService.getPropertyByGroupId(_id);
+                const newGroupName = await this.findGroupNameById(groupIdToMoveIn);
+                await propertyService.updatePropertiesGroup(groupIdToMoveIn, _id, newGroupName);
+                const alreadyInUse = await this.findGroupById(groupIdToMoveIn);
+                await GroupModal.updateOne({_id: groupIdToMoveIn},{properties: (Number(properties.length)+Number(alreadyInUse)) })
+            }
             await GroupModal.updateOne({_id},{isDeleted:1, properties: 0});
             return{
                 message: "deleted",

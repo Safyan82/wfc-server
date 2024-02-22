@@ -16,9 +16,18 @@ export class EmployeeViewService{
         return view;
     }
 
-    async getEmployeeView(){
+    async getEmployeeView(_id){
         try{
-            const employeeView = await EmployeeViewModal.find();
+            const employeeView = await EmployeeViewModal.aggregate([
+                {
+                    $match:{
+                     $or:[
+                       {createdBy: _id.toString()},
+                       {visibility: "public"}
+                     ]   
+                    }
+                }
+            ]);
             if(employeeView?.length<1){
                 const employeeViewResponse = await this.newStandardEmployeeView();
                 

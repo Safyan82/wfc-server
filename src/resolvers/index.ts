@@ -14,6 +14,8 @@ import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
+import { SkillCategoryResolver } from "./skillCategoryResolver/skillCategory.resolver";
+import { SkillResolver } from "./skillResolver/skill.resolver";
 import { ThemeResolver } from "./themeResolver/theme.resolver";
 import { UserAccessResolver } from "./userAccessResolver/userAccess.resolver";
 import UserResolver from "./userResolver/user.resolver";
@@ -21,6 +23,7 @@ import { UserRoleResolver } from "./userRoleResolver/userRole.resolver";
 
 
 export const resolvers = [
+    
     UserResolver, 
     KafkaResolver,
     BranchResolver,
@@ -40,5 +43,8 @@ export const resolvers = [
     UserAccessResolver,
     SearchResolver,
     selectedSearchResolver,
-    ThemeResolver
+    ThemeResolver,
+    SkillResolver,
+    SkillCategoryResolver,
+
 ] as const
