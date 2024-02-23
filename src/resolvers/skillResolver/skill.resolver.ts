@@ -1,7 +1,8 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { SkillService } from "../../service/skillService/skill.service";
 import { Skill, SkillInput, skillResponse } from "../../schema/skillsSchema/skill.schema";
 import mongoose from "mongoose";
+import { Context } from "../../utils/context";
 
 @Resolver()
 export class SkillResolver{
@@ -12,11 +13,11 @@ export class SkillResolver{
 
     @Authorized()
     @Mutation(()=>Skill)
-    async newSkill(@Arg('input', {validate: true}) input:SkillInput){
-        return this.skillService.newSkill(input);
+    async newSkill(@Ctx() ctx:Context, @Arg('input', {validate: true}) input:SkillInput){
+        return this.skillService.newSkill(input, ctx?.user?._id);
     }
 
-    @Authorized()
+    // @Authorized()
     @Query(()=>[Skill])
     async getSkills(){
         return this.skillService.getSkills();
