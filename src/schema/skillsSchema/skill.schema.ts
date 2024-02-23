@@ -14,6 +14,10 @@ export class Skill{
     @Prop()
     skill: string
 
+    @Field(()=>GraphQLJSON, {nullable: true})
+    @Prop()
+    fields: any
+
     @Field(()=>String, {nullable: true})
     @Prop()
     description: string
@@ -68,6 +72,10 @@ export class SkillInput{
     @Field(()=>String, {nullable: true})
     @Prop()
     skill: string
+
+    @Field(()=>GraphQLJSON, {nullable: true})
+    @Prop()
+    fields: any
 
     @Field(()=>String, {nullable: true})
     @Prop()

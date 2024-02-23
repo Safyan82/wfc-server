@@ -6,6 +6,7 @@ import { BranchObjectService } from "../branchObjectService/branchObject.service
 import { EmployeeObjectService } from "../employeeObjectService/employeeObject.service";
 import { objectTypeList } from "../../utils/objectype";
 import { Context } from "../../utils/context";
+import mongoose from "mongoose";
 
 export class PropertiesService{
     
@@ -413,8 +414,15 @@ export class PropertiesService{
 
           if (fields && Object.keys(fields)?.length) {
             fields?.map((fld)=>{
+                
                 if(fld.value){
-                    matchStage.$match.$and.push({ [fld.field]: fld.value });
+                    if(fld?.field=="groupId"){
+                        matchStage.$match.$and.push({ [fld.field]: new mongoose.Types.ObjectId(fld.value) });
+
+                    }else{
+
+                        matchStage.$match.$and.push({ [fld.field]: fld.value });
+                    }
                 }
             })
             matchStage.$match.$and.push({ isArchive: false });
