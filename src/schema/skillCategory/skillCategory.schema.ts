@@ -8,7 +8,7 @@ import { Field, ID, InputType, ObjectType } from "type-graphql";
 @ObjectType()
 export class SkillCategory{
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     _id: ObjectId
 
     @Field(()=>String)
@@ -40,12 +40,31 @@ export class SkillCategoryResponse extends SkillCategory{
     createdByDetail: any
 }
 
+@ObjectType()
+export class SkillCategoryGenericResponse{
+    @Field(()=>String)
+    message:string
+}
 @InputType()
 export class SkillCategoryInput{
     
     @Field(()=>String)
     @Prop()
     category: string
+}
+
+
+
+@InputType()
+class CategoryIds {
+    @Field(()=>String)
+    ids:string
+}
+
+@InputType()
+export class CategoryBulkDeleteInput{
+    @Field(()=>GraphQLJSON)
+    id:[CategoryIds]
 }
 
 export const SkillCategoryModal = getModelForClass(SkillCategory);

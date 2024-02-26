@@ -42,4 +42,15 @@ export class SkillCategoryService{
             throw new Error(err.message);
         }
     }
+
+    async deleteSkillCategory(ids){
+        try{
+            await SkillCategoryModal.deleteMany({_id:{$in:ids}});
+            return {
+                message: "Skill Category Deleted Successfully",
+            }
+        }catch(err){
+            throw new Error(err);
+        }
+    }
 }

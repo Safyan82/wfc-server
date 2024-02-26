@@ -115,6 +115,18 @@ export class SkillInput{
 
 }
 
+@InputType()
+class skillIds {
+    @Field(()=>String)
+    id:string
+}
+
+@InputType()
+export class BulkInput{
+    @Field(()=>GraphQLJSON)
+    id:[skillIds]
+}
+
 @ObjectType()
 export class skillResponse{
     @Field(()=>String)

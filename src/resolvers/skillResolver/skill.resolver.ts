@@ -1,6 +1,6 @@
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { SkillService } from "../../service/skillService/skill.service";
-import { Skill, SkillInput, skillResponse } from "../../schema/skillsSchema/skill.schema";
+import { BulkInput, Skill, SkillInput, skillResponse } from "../../schema/skillsSchema/skill.schema";
 import mongoose from "mongoose";
 import { Context } from "../../utils/context";
 
@@ -17,17 +17,18 @@ export class SkillResolver{
         return this.skillService.newSkill(input, ctx?.user?._id);
     }
 
-    // @Authorized()
+    @Authorized()
     @Query(()=>[Skill])
     async getSkills(){
         return this.skillService.getSkills();
     }
 
-    @Authorized()
+    // @Authorized()
     @Mutation(()=>skillResponse)
-    async deleteSkill(@Arg('id') id:string){
-        const _id = new mongoose.Types.ObjectId(id);
-        return this.skillService.deleteSkill(_id)
+    async deleteSkill(@Arg('deleteSkills') deleteSkills:BulkInput){
+        
+        const ids = deleteSkills?.id?.map((_id)=> (new mongoose.Types.ObjectId(_id)));
+        return this.skillService.deleteSkill(ids)
     }
 
 }

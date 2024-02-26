@@ -62,9 +62,12 @@ export class SkillService{
         }
     }
 
-    async deleteSkill(_id){
+    async deleteSkill(_ids){
         try{
-            await skillModal.deleteOne({_id});
+            await skillModal.deleteMany({_id:{$in:_ids}});
+            return {
+                message: "Skills deleted successfully"
+            }
         }
         catch(err){
             throw new Error(err.message);
