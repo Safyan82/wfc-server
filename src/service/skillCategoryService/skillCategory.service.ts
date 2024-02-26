@@ -1,11 +1,30 @@
+import dayjs from "dayjs";
 import { SkillCategoryModal } from "../../schema/skillCategory/skillCategory.schema";
 
 export class SkillCategoryService{
+    
     async newSkillCategory(input, _id){
         try{
             const category = await SkillCategoryModal.create({
                 ...input,
                 createdBy: _id
+            });
+            return category;
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+    async updateSkillCategory(input, userId){
+        try{
+            const {_id, ...rest} = input;
+            const category = await SkillCategoryModal.updateOne({_id},{
+                $set:{
+                    ...rest,
+                    updatedBy: userId,
+                    updatedAt: dayjs()
+                }
             });
             return category;
         }

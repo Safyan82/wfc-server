@@ -11,24 +11,24 @@ export class SkillCategory{
     @Field(()=>ID, {nullable: true})
     _id: ObjectId
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @Prop()
     category: string
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     @Prop()
     createdBy: ObjectId
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @Prop({default: dayjs().format("DD/MM/YYYY HH:mm")})
     createdAt: string
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     @Prop()
     updatedBy: ObjectId
 
     
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @Prop()
     updatedAt: string
 
@@ -48,9 +48,14 @@ export class SkillCategoryGenericResponse{
 @InputType()
 export class SkillCategoryInput{
     
+    @Field(()=>String,{nullable: true})
+    _id: string
+
     @Field(()=>String)
     @Prop()
     category: string
+
+    
 }
 
 
