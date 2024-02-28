@@ -63,6 +63,12 @@ export class Skill{
     updatedAt: string
 }
 
+@ObjectType()
+export class SkillResponse extends Skill{
+    @Field(()=>String, {nullable: true})
+    categoryName: string
+}
+
 @InputType()
 export class SkillInput{
     

@@ -1,6 +1,6 @@
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { SkillService } from "../../service/skillService/skill.service";
-import { BulkInput, Skill, SkillInput, skillResponse } from "../../schema/skillsSchema/skill.schema";
+import { BulkInput, Skill, SkillInput, SkillResponse, skillResponse } from "../../schema/skillsSchema/skill.schema";
 import mongoose from "mongoose";
 import { Context } from "../../utils/context";
 
@@ -18,7 +18,7 @@ export class SkillResolver{
     }
 
     @Authorized()
-    @Query(()=>[Skill])
+    @Query(()=>[SkillResponse])
     async getSkills(){
         return this.skillService.getSkills();
     }

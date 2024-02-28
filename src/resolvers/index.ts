@@ -7,6 +7,7 @@ import { EmployeeDetailViewResolver } from "./employeeDetailViewResolver/employe
 import { EmployeeObjectResolver } from "./employeeObjectResolver/employeeObject.resolver";
 import { EmployeePropertyHistoryResolver } from "./employeePropertyHistoryResolver/employeePropertyHistory.resolver";
 import { EmployeeResolver } from "./employeeResolver/employee.resolver";
+import { EmployeeSkillResolver } from "./employeeSkillResolver/employeeSkill.resolver";
 import { EmployeeViewResolver } from "./employeeViewResolver/employeeView.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
@@ -46,5 +47,5 @@ export const resolvers = [
     ThemeResolver,
     SkillResolver,
     SkillCategoryResolver,
-
+    EmployeeSkillResolver
 ] as const

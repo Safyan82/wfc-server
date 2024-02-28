@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { SkillCategoryModal } from "../../schema/skillCategory/skillCategory.schema";
+import { skillModal } from "../../schema/skillsSchema/skill.schema";
 
 export class SkillCategoryService{
     
@@ -64,9 +65,21 @@ export class SkillCategoryService{
 
     async deleteSkillCategory(ids){
         try{
-            await SkillCategoryModal.deleteMany({_id:{$in:ids}});
-            return {
-                message: "Skill Category Deleted Successfully",
+            const isCategoryInUser = await skillModal.find({categoryId:{$in:ids}});
+            if(isCategoryInUser?.length>0){
+                if(ids?.length==1){
+
+                    throw new Error("Category is in use");
+                }else{
+                    throw new Error("One or more of these category is in use");
+
+                }
+            }else{
+
+                await SkillCategoryModal.deleteMany({_id:{$in:ids}});
+                return {
+                    message: "Skill Category Deleted Successfully",
+                }
             }
         }catch(err){
             throw new Error(err);
