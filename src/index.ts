@@ -14,6 +14,7 @@ import jwt from 'jsonwebtoken';
 import UserService from './service/userService/user.service';
 import { WebSocketServer } from "ws";
 import http from 'http';
+import bodyParser from 'body-parser';
 // import { consumer } from './utils/kafka';
 
 
@@ -80,6 +81,8 @@ async function bootstrap(){
   // apply cookie parser as middleware
   app.use(cors());
   app.use(cookieParser());
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
   
   // create apollo server
   const server = new ApolloServer({
