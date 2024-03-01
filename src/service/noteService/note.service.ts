@@ -1,61 +1,46 @@
-import { noteModal } from "../../schema/notesSchema/note.schema";
+import mongoose from "mongoose";
+import { noteModal } from "../../schema/noteSchema/note.schema";
 
 export class NoteService{
-    async upsertNote(input){
+    async newNote(input, createdBy){
         try{
-            const {_id, ...rest} = input;
-            if(_id){
-                const isNoteExist = await noteModal.findById(_id);
-                if(isNoteExist){
-                    const n = await noteModal.findByIdAndUpdate({_id},{$set:rest})
-                    return{
-                        success: 1,
-                        message: JSON.stringify(n)
-                    }
-                }
-            }
-            await noteModal.create(input);
-            return{
-                success: 1,
-                message: "Note added successfully"
+            const employeeNote = await noteModal.create({...input, createdBy});
+            return {
+                message: "Note created",
+                response: employeeNote
             }
         }catch(err){
-            return{
-                success: 0,
-                message: err.message,
-            }
+            throw new Error(err.message);
         }
     }
 
-    async getNote(id:string){
+    async getNote(createdFor, objectType){
         try{
-
-            const note = await noteModal.findById(id);
+            const notes = await noteModal.aggregate([
+                {
+                    $match:{
+                        $and:[
+                            {createdFor: new mongoose.Types.ObjectId(createdFor)},
+                            {objectType}
+                        ]
+                    }
+                        
+                },
+                {
+                    $lookup:{
+                        localField:'createdBy',
+                        foreignField:'_id',
+                        as:'createdBy',
+                        from:'employees'
+                    }
+                }
+            ]);
             return{
-                note,
-                success: 1
+                message: "All  Notes has been reterived",
+                response: notes
             }
-        }
-        catch(err:any){
-            throw new Error(err.message)
+        }catch(err){
+            throw new Error(err.message);
         }
     }
-
-    async getNotes(){
-        try{
-            const note = await noteModal.find();
-            return{
-                success: 1,
-                note,
-            }
-        }
-        catch(err){
-            return {
-                message:"An error is encountered while reteriving the notes",
-                success:0
-            }
-        }
-    }
-
-    
 }

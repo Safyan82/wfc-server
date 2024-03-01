@@ -32,7 +32,6 @@ export const resolvers = [
     PropertiesResolver,
     BranchObjectResolver,
     BranchViewResolver,
-    NoteResolver,
     BranchDetailViewResolver,
     BranchPropertyHistoryResolver,
     EmployeeObjectResolver,
@@ -47,5 +46,6 @@ export const resolvers = [
     ThemeResolver,
     SkillResolver,
     SkillCategoryResolver,
-    EmployeeSkillResolver
+    EmployeeSkillResolver,
+    NoteResolver
 ] as const
