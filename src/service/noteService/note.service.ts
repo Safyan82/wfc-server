@@ -33,6 +33,22 @@ export class NoteService{
                         as:'createdBy',
                         from:'employees'
                     }
+                },
+                {
+                    $lookup:{
+                        localField:'_id',
+                        foreignField:'noteId',
+                        as:'comments',
+                        from:'notecomments'
+                    }
+                },
+                {
+                    $lookup:{
+                        localField:'comments.commentedBy',
+                        foreignField:'_id',
+                        as:'commentedBy',
+                        from:'employees',
+                    }
                 }
             ]);
             return{
@@ -41,6 +57,28 @@ export class NoteService{
             }
         }catch(err){
             throw new Error(err.message);
+        }
+    }
+
+    async updateNote(input){
+        try{
+            const {_id, ...rest} = input;
+            const updatedNotes = await noteModal.updateOne({_id},{$set:rest});
+            return{
+                message:"notes updated successfully",
+                response: updatedNotes
+            }
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+    async deleteNote(noteId){
+        const deletedNote = await noteModal.deleteOne({_id:noteId})
+        return{
+            message: "Note Deleted Successfully",
+            response: deletedNote
         }
     }
 }

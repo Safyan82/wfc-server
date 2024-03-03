@@ -46,13 +46,13 @@ export class NoteInput{
     @Field(()=>String, {nullable: true})
     _id: string
     
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     note: string
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     objectType: string
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     createdFor: ObjectId
 
 }

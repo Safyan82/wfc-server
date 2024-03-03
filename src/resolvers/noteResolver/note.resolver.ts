@@ -2,6 +2,7 @@ import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { NoteService } from "../../service/noteService/note.service";
 import { NoteInput, NoteResponse } from "../../schema/noteSchema/note.schema";
 import { Context } from "../../utils/context";
+import mongoose from "mongoose";
 
 @Resolver()
 export class NoteResolver{
@@ -16,9 +17,20 @@ export class NoteResolver{
     }
 
     @Authorized()
-    @Query  (()=>NoteResponse)
+    @Query(()=>NoteResponse)
     getNote(@Arg('createdFor') createdFor: String, @Arg('objectType') objectType:String){
         return this.noteService.getNote(createdFor, objectType)
     }
 
+    @Authorized()
+    @Mutation(()=>NoteResponse)
+    updateNote(@Arg('input') input:NoteInput){
+        return this.noteService.updateNote(input);
+    }
+
+    @Authorized()
+    @Mutation(()=>NoteResponse)
+    deleteNote(@Arg('noteId') noteId:string){
+        return this.noteService.deleteNote(new mongoose.Types.ObjectId(noteId))
+    }
 }
