@@ -11,6 +11,7 @@ import { EmployeeSkillResolver } from "./employeeSkillResolver/employeeSkill.res
 import { EmployeeViewResolver } from "./employeeViewResolver/employeeView.resolver";
 import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
+import { NoteCommentResolver } from "./noteCommentResolver/noteComment.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
@@ -32,7 +33,6 @@ export const resolvers = [
     PropertiesResolver,
     BranchObjectResolver,
     BranchViewResolver,
-    NoteResolver,
     BranchDetailViewResolver,
     BranchPropertyHistoryResolver,
     EmployeeObjectResolver,
@@ -47,5 +47,7 @@ export const resolvers = [
     ThemeResolver,
     SkillResolver,
     SkillCategoryResolver,
-    EmployeeSkillResolver
+    EmployeeSkillResolver,
+    NoteResolver,
+    NoteCommentResolver,
 ] as const

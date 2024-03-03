@@ -1,27 +1,36 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { NoteInput, noteGenericResponse } from "../../schema/notesSchema/note.schema";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { NoteService } from "../../service/noteService/note.service";
+import { NoteInput, NoteResponse } from "../../schema/noteSchema/note.schema";
+import { Context } from "../../utils/context";
+import mongoose from "mongoose";
 
 @Resolver()
 export class NoteResolver{
-    constructor( private noteService : NoteService){
+    constructor(private noteService: NoteService){
         this.noteService = new NoteService();
     }
 
-    @Mutation(()=>noteGenericResponse)
-    upsertNote(@Arg('input', {validate:true}) input:NoteInput){
-        return this.noteService.upsertNote(input);
+    @Authorized()
+    @Mutation(()=>NoteResponse)
+    newNote(@Arg('input') input:NoteInput, @Ctx() ctx: Context){
+        return this.noteService.newNote(input, ctx?.user?.employeeId)
     }
 
-    @Query(()=>noteGenericResponse)
-    getNote(@Arg('id',{validate:true}) id:string)
-    {
-        return this.noteService.getNote(id);
+    @Authorized()
+    @Query(()=>NoteResponse)
+    getNote(@Arg('createdFor') createdFor: String, @Arg('objectType') objectType:String){
+        return this.noteService.getNote(createdFor, objectType)
     }
 
-    @Query(()=>noteGenericResponse)
-    getNotes()
-    {
-        return this.noteService.getNotes();
+    @Authorized()
+    @Mutation(()=>NoteResponse)
+    updateNote(@Arg('input') input:NoteInput){
+        return this.noteService.updateNote(input);
+    }
+
+    @Authorized()
+    @Mutation(()=>NoteResponse)
+    deleteNote(@Arg('noteId') noteId:string){
+        return this.noteService.deleteNote(new mongoose.Types.ObjectId(noteId))
     }
 }
