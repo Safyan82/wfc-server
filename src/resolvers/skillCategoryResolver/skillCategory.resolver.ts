@@ -1,6 +1,6 @@
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { SkillCategoryService } from "../../service/skillCategoryService/skillCategory.service";
-import { CategoryBulkDeleteInput, SkillCategory, SkillCategoryGenericResponse, SkillCategoryInput } from "../../schema/skillCategory/skillCategory.schema";
+import { CategoryBulkDeleteInput, SkillCategory, SkillCategoryGenericResponse, SkillCategoryInput, SkillCategoryResponse } from "../../schema/skillCategory/skillCategory.schema";
 import { Context } from "../../utils/context";
 import mongoose from "mongoose";
 
@@ -23,7 +23,7 @@ export class SkillCategoryResolver{
     }
 
     @Authorized()
-    @Query(()=>[SkillCategory])
+    @Query(()=>[SkillCategoryResponse])
     async getSkillCategories(){
         return this.skillCategoryService.getSkillCategories();
     }
@@ -32,7 +32,7 @@ export class SkillCategoryResolver{
     @Mutation(()=>SkillCategoryGenericResponse)
     async deleteSkillCategory(@Arg('input') input: CategoryBulkDeleteInput){
         
-        const ids = input?.id?.map((_id)=> (new mongoose.Types.ObjectId(_id)));
+        const ids = input?.id?.map((_id)=> (new mongoose.Types.ObjectId(_id.toString())));
         return this.skillCategoryService.deleteSkillCategory(ids);
     }
 

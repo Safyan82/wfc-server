@@ -30,6 +30,14 @@ export class EmployeeSkill{
     @Prop({default: true})
     status: boolean
 
+    @Field(()=>Boolean, {nullable: true})
+    @Prop({default: false})
+    isArchive: boolean
+
+    @Field(()=>Boolean, {nullable: true})
+    @Prop({default: false})
+    isDeleted: boolean
+
     @Field(()=>ID, {nullable: true})
     @Prop()
     createdBy: ObjectId

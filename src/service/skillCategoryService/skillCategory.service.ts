@@ -55,8 +55,18 @@ export class SkillCategoryService{
                     }
                 },
 
+                {
+                    $lookup: {
+                        from: "employeeskills",
+                        localField: "_id",
+                        foreignField: "categoryId",
+                        as: "skill"
+                    }
+                },
+
             ]);
-            return skillCategory.map((sc)=>({...sc, createdBy:sc?.createdByDetail[0]?.firstname +' '+ sc?.createdByDetail[0]?.lastname}));
+
+            return skillCategory.map((sc)=>({...sc, createdBy:sc?.createdByDetail[0]?.firstname +' '+ sc?.createdByDetail[0]?.lastname, skillsnumber: sc?.skill?.length}));
         }
         catch(err){
             throw new Error(err.message);

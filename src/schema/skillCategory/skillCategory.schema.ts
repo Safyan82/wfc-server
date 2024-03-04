@@ -36,8 +36,10 @@ export class SkillCategory{
 
 @ObjectType()
 export class SkillCategoryResponse extends SkillCategory{
-    @Field(()=>GraphQLJSON)
+    @Field(()=>GraphQLJSON,{nullable: true})
     createdByDetail: any
+    @Field(()=>Number,{nullable: true})
+    skillsnumber: any
 }
 
 @ObjectType()
