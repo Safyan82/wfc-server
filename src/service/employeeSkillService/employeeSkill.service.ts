@@ -6,7 +6,7 @@ export class EmployeeSkillService{
 
     async newEmployeeSkill(input, userId){
         try{
-            const isExist = await employeeSkillModal.findOne({skill: input?.skill});
+            const isExist = await employeeSkillModal.findOne({skill: input?.skill, isArchive: false});
             if(isExist){
                 throw new Error("This skill already exist");
             }else{
@@ -21,12 +21,17 @@ export class EmployeeSkillService{
         }
     }
 
-    async updateEmployeeSkill(input){
+    async updateEmployeeSkill(input, userId){
         const {_id, ...rest} = input;
         try{
-            const empSkill = await employeeSkillModal.updateOne({_id},{$set:rest});
+            const existingSkill = await employeeSkillModal.findById({_id});
+            if(existingSkill){
+                const {skill, categoryId} = existingSkill;
+                await employeeSkillModal.updateOne({_id},{$set:{isArchive: true, updatedBy: userId, updatedAt: dayjs().format("DD/MM/YYYY HH:mm")}});
+                await employeeSkillModal.create({skill, categoryId, ...rest, createdBy: userId, createdAt: dayjs().format("DD/MM/YYYY HH:mm")});
+            }
             return{
-                response: empSkill,
+                response: {},
                 message: "Employee Skill Updated Successfully",
             }
         }catch(err){
@@ -34,12 +39,20 @@ export class EmployeeSkillService{
         }
     }
 
-    async getEmployeeSkill(employeeId){
+    async getEmployeeSkill(employeeId,condition){
         try{
             const empSkill = await employeeSkillModal.aggregate([
                 {
                     $match: {
-                        employeeId: new mongoose.Types.ObjectId(employeeId)
+                        $and:[
+                            {
+                                employeeId: new mongoose.Types.ObjectId(employeeId),
+                            },
+                            {
+                                isArchive: condition=="all"?  false: true
+                            }
+                        ]
+
                     }
                 },
                 {
@@ -48,6 +61,14 @@ export class EmployeeSkillService{
                         localField:'categoryId',
                         from:'skillcategories',
                         as:'categoryDetail'
+                    }
+                },
+                {
+                    $lookup:{
+                        foreignField:'_id',
+                        localField:'updatedBy',
+                        from:'employees',
+                        as:'updatedBy'
                     }
                 },
                 {
@@ -68,10 +89,10 @@ export class EmployeeSkillService{
         }
     }
 
-    async deleteEmployeeSkill(id){
+    async deleteEmployeeSkill(id, userId){
         try{
             const ids = id?.map((i)=>new mongoose.Types.ObjectId(i))
-            await employeeSkillModal.deleteMany({_id:{$in:ids}});
+            await employeeSkillModal.updateMany({_id:{$in:ids}},{$set:{isDeleted:false, isArchive:true, updatedAt: dayjs().format("DD/MM/YYYY HH:mm"), updatedBy: userId}});
             return{
                 response:{},
                 message:"Employee Skill Deleted Successfully",
@@ -80,4 +101,5 @@ export class EmployeeSkillService{
             throw new Error(err.message);
         }
     }
+
 }
