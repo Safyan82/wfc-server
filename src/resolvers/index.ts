@@ -16,6 +16,9 @@ import { NoteResolver } from "./noteResolver/note.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
+import { SiteGroupObjectResolver } from "./siteGroupObjectResolver/siteGroupObject.resolver";
+import SiteGroupResolver from "./siteGroupResolver/siteGroup.resolver";
+import { SiteObjectResolver } from "./siteObjectResolver/siteObject.resolver";
 import { SkillCategoryResolver } from "./skillCategoryResolver/skillCategory.resolver";
 import { SkillResolver } from "./skillResolver/skill.resolver";
 import { ThemeResolver } from "./themeResolver/theme.resolver";
@@ -50,4 +53,7 @@ export const resolvers = [
     EmployeeSkillResolver,
     NoteResolver,
     NoteCommentResolver,
+    SiteGroupObjectResolver,
+    SiteGroupResolver,
+    SiteObjectResolver,
 ] as const
