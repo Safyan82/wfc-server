@@ -7,6 +7,8 @@ import { EmployeeObjectService } from "../employeeObjectService/employeeObject.s
 import { objectTypeList } from "../../utils/objectype";
 import { Context } from "../../utils/context";
 import mongoose from "mongoose";
+import { SiteGroupObjectService } from "../siteGroupObjectService/siteGroupObject.service";
+import { SiteObjectService } from "../siteObjectSerivce/siteObject.service";
 
 export class PropertiesService{
     
@@ -15,6 +17,8 @@ export class PropertiesService{
             const groupService = new GroupService();
             const branchObjectService = new BranchObjectService();
             const employeeObjectService = new EmployeeObjectService();
+            const siteGroupObjectService = new SiteGroupObjectService();
+            const siteObjectService = new SiteObjectService();
 
             const generatedPropert = await PropertiesModal.create({...input, 
                 isDelete: 0,
@@ -28,6 +32,12 @@ export class PropertiesService{
                 }
                 else if(input?.objectType===objectTypeList.Employee){
                     await employeeObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
+                }
+                else if(input?.objectType===objectTypeList.SiteGroup){
+                    await siteGroupObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
+                }
+                else if(input?.objectType===objectTypeList.Site){
+                    await siteObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
                 }
             }
             return {
@@ -101,11 +111,20 @@ export class PropertiesService{
             // if(input?.rules?.ownedby){
             const branchObjectService = new BranchObjectService();
             const employeeObjectService = new EmployeeObjectService();
+            const siteGroupObjectService = new SiteGroupObjectService();
+            const siteObjectService = new SiteObjectService();
+
             if(input?.objectType===objectTypeList.Branch){
                 await branchObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
             }
             else if(input?.objectType===objectTypeList.Employee){
                 await employeeObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
+            }
+            else if(input?.objectType===objectTypeList.SiteGroup){
+                await siteGroupObjectService.generateMandatoryObject(input.id, input?.rules?.ownedby);
+            }
+            else if(input?.objectType===objectTypeList.Site){
+                await siteObjectService.generateMandatoryObject(input.id, input?.rules?.ownedby);
             }
             // }
             
@@ -532,11 +551,19 @@ export class PropertiesService{
 
 
     // get props with their owner to allow access
-    async getOwnedProp(createdBy, objectType){
+    async getOwnedProp(createdBy, objectType, userAccessType=""){
         try{
-            const ownedProps = await PropertiesModal.find({createdBy, objectType});
-            const ownedPropsIds = await ownedProps?.map((prop)=>prop._id);
-            return ownedPropsIds;
+            if(userAccessType == 'ADMIN PERMISSION'){
+
+                const ownedProps = await PropertiesModal.find({objectType});
+                const ownedPropsIds = await ownedProps?.map((prop)=>prop._id);
+                return ownedPropsIds;
+
+            }else{
+                const ownedProps = await PropertiesModal.find({createdBy, objectType});
+                const ownedPropsIds = await ownedProps?.map((prop)=>prop._id);
+                return ownedPropsIds;
+            }
         }catch(err){
             throw new Error(err.message);
         }

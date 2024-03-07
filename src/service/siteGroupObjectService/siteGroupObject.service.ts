@@ -1,44 +1,18 @@
 import dayjs from "dayjs";
-import { employeeObjectModal } from "../../schema/employeeObjectSchema/employeeObject.Schema";
 import { PropertiesService } from "../propertiesService/properties.service";
 import { objectTypeList } from "../../utils/objectype";
 import { extractPermittedPropIds } from "../../utils/permissionPower/extractPermittedProps";
 import mongoose from "mongoose";
+import { siteGroupObjectModal } from "../../schema/siteGroupObjectSchema/siteGroupObject.schema";
 
-
-export class EmployeeObjectService{
-    async generateMandatoryObject(propertyId, isReadOnly){
-        try{
-            const isExist  = await employeeObjectModal.findOne({propertyId: propertyId});
-            if(isExist){
-                await employeeObjectModal.updateOne({propertyId},{isReadOnly})
-            }else{
-
-                // do it to update use in prop
-                const property = new PropertiesService();
-                const propertyDetail = await property.getPropertyById(propertyId);
-                const useIn = Number(propertyDetail?.useIn) + 1;
-            
-                await property?.updatePropertyInUse(propertyId, useIn);
-            
-                await employeeObjectModal.create({
-                    propertyId,
-                    isMandatory: 1,
-                    isReadOnly: isReadOnly? isReadOnly: false,
-                    date: dayjs(),
-                });
-            }
-        }catch(err){
-            throw new Error(err.message);
-        }
-    }
-     
+export class SiteGroupObjectService{
+    
     async updateMandatoryObject(propertyId, isReadOnly){
         try{
             
-            const isExist  = await employeeObjectModal.findOne({propertyId: propertyId});
+            const isExist  = await siteGroupObjectModal.findOne({propertyId: propertyId});
             if(isExist){
-                await employeeObjectModal.updateOne({propertyId},{isReadOnly})
+                await siteGroupObjectModal.updateOne({propertyId},{isReadOnly})
             }
             else{
                 if(isReadOnly==true){
@@ -51,34 +25,36 @@ export class EmployeeObjectService{
         }
     }
 
-    async deleteEmployeeObject({properties}){
+    async generateMandatoryObject(propertyId, isReadOnly){
         try{
+            const isExist  = await siteGroupObjectModal.findOne({propertyId: propertyId});
+            if(isExist){
+                await siteGroupObjectModal.updateOne({propertyId},{isReadOnly})
+            }else{
 
-            await employeeObjectModal.deleteMany({propertyId: { $in: properties}});
+                // do it to update use in prop
+                const property = new PropertiesService();
+                const propertyDetail = await property.getPropertyById(propertyId);
+                const useIn = Number(propertyDetail?.useIn) + 1;
             
-                    
-            const property = new PropertiesService();
-            Promise.all(properties?.map(async (prop)=>{
-                const propertyDetail = await property.getPropertyById(prop);
-                const useIn = Number(propertyDetail?.useIn) - 1;
-                
-                return await property?.updatePropertyInUse(prop, useIn);
-            }));
-
-            return {
-                 response: properties
+                await property?.updatePropertyInUse(propertyId, useIn);
+            
+                await siteGroupObjectModal.create({
+                    propertyId,
+                    isMandatory: 1,
+                    isReadOnly: isReadOnly? isReadOnly: false,
+                    date: dayjs(),
+                });
             }
-        }
-        catch(err){
+        }catch(err){
             throw new Error(err.message);
         }
     }
 
-    
-    async updateEmployeeObjectOrder({fields}){
+    async updateSiteGroupObjectOrder({fields}){
         try{
             await Promise.all(fields?.map(async(field, index)=>{
-                return await employeeObjectModal.updateOne({propertyId: field?.propertyId},{$set:{order: index}})
+                return await siteGroupObjectModal.updateOne({propertyId: field?.propertyId},{$set:{order: index}})
             }));
             return{
                 response:{
@@ -92,13 +68,13 @@ export class EmployeeObjectService{
         }
     }
 
-    async createEmployeeObject({fields}){
+    async createSiteGroupObject({fields}){
         try{
             await Promise.all(fields?.map(async(schema)=>{
-                const isExist  = await employeeObjectModal.findOne({propertyId: schema?.propertyId});
+                const isExist  = await siteGroupObjectModal.findOne({propertyId: schema?.propertyId});
                 if(isExist && Object.keys(isExist)?.length>0){
 
-                    return await employeeObjectModal.updateOne({propertyId: schema?.propertyId},{
+                    return await siteGroupObjectModal.updateOne({propertyId: schema?.propertyId},{
                         $set:{isMandatory: schema?.isMandatory},
                     });
 
@@ -110,7 +86,7 @@ export class EmployeeObjectService{
                     const useIn = Number(propertyDetail?.useIn) + 1;
                 
                     await property?.updatePropertyInUse(schema?.propertyId, useIn);
-                    return await employeeObjectModal.create({
+                    return await siteGroupObjectModal.create({
                         ...schema,
                         isReadOnly: 0,
                         date: dayjs(),
@@ -121,7 +97,7 @@ export class EmployeeObjectService{
             return {
                 response:{
                     success: 1,
-                    message: "Properties added successfully",
+                    message: "Data Fields added successfully",
                 }
             };
 
@@ -130,19 +106,19 @@ export class EmployeeObjectService{
         }
     }
 
-    async employeeObject(ctx){
+    async siteGroupObject(ctx){
         try{
 
+            
             // get all owned Props by particular requesting user
             
             const propService = new PropertiesService();
 
-            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Employee);
-
+            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.SiteGroup);
             // terminate all owned props
-
-
-            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Employee) || [];
+            
+            
+            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.SiteGroup);
             // get all the created properties that are not in list of permitted properties
             // case 1;  in created properties there can be permitted props
             // case 2;  props can be created after the user created for the particulat object type
@@ -156,26 +132,15 @@ export class EmployeeObjectService{
             
             const extendedPermittedProperties = [...Permittedproperties, ...getNewlyCreatedProps];
             
-            let matchStage = {
-                $match: {
-                    $and: [
-                        {
-                            propertyId: {
-                                $ne: null
-                            }
-                        }
-                    ]
-                }
-            };
+            console.log(ownedProp, "ownedprop", Permittedproperties, ctx?.user?._id, extendedPermittedProperties)
 
-            if(Permittedproperties?.length>0){
-                matchStage.$match.$and.push({
-                    propertyId: {$in: extendedPermittedProperties}
-                })
-            }
-            
-            const employeeObjectData = await employeeObjectModal.aggregate([
-                matchStage,
+
+            const siteGroupObjectData = await siteGroupObjectModal.aggregate([
+                {
+                    $match:{
+                        propertyId:{ $in: extendedPermittedProperties}
+                    }
+                },
                 {
                   $lookup: {
                     from: "properties",
@@ -204,15 +169,48 @@ export class EmployeeObjectService{
                   }
                 }
             ]);
-            const employeeObject = (employeeObjectData?.filter((employee)=>
-                employee?.propertyDetail?.isArchive!=true))
+            const siteGroupObject = (siteGroupObjectData?.filter((siteGroup)=>
+                siteGroup?.propertyDetail?.isArchive!=true))
             
             return {
-                response: employeeObject
+                response: siteGroupObject
             }
         }
         catch(err){
             throw new Error(err.message);
         }
     }
-}
+
+    async deleteSiteGroupObject({properties}){
+        try{
+
+            await siteGroupObjectModal.deleteMany({propertyId: { $in: properties}});
+            
+                    
+            const property = new PropertiesService();
+            Promise.all(properties?.map(async (prop)=>{
+                const propertyDetail = await property.getPropertyById(prop);
+                const useIn = Number(propertyDetail?.useIn) - 1;
+                
+                return await property?.updatePropertyInUse(prop, useIn);
+            }));
+
+            return {
+                 response: properties
+            }
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+    async getSinglePropFromSiteGroupObjectSchema(id){
+        try{
+            const {isMandatory} = await siteGroupObjectModal.findById(id);
+            return isMandatory;
+        }
+        catch(err){
+            throw new Error(err.message);
+        }
+    }
+};
