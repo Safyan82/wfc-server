@@ -254,8 +254,10 @@ export default class SiteGroupService{
         try{
             const siteGroup =  await SiteGroupModal.findById(_id);
             return {
-                branchname: siteGroup?.sitegroupname,
+                _id: siteGroup?._id,
+                sitegroupname: siteGroup?.sitegroupname,
                 metadata: siteGroup?.metadata,
+                ...siteGroup
             }
         }
         catch(err){

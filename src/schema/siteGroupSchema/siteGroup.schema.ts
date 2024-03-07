@@ -6,22 +6,30 @@ import { Date, ObjectId } from "mongoose";
 
 @ObjectType()
 export class SiteGroup{
-    @Field(()=>String)
+    @Field(()=>ID)
     _id: string;
 
     @Field(()=>String)
     @prop()
     sitegroupname:string;
 
+    // @Field(()=>String)
+    // @prop()
+    // customerId:ObjectId;
+
+    // @Field(()=>ID)
+    // @prop()
+    // branchId:ObjectId;
+
     @Field(()=>GraphQLJSON,{nullable:true})
     @prop()
     metadata:any;
 
-    @Field(()=>String)
+    @Field(()=>String,{nullable:true})
     @Prop()
     createdDate: string
 
-    @Field(()=>String)
+    @Field(()=>String,{nullable:true})
     @Prop()
     updatedDate: string
 
