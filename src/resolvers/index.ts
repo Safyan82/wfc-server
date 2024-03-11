@@ -13,6 +13,9 @@ import { GroupResolver } from "./groupResolver/group.resolver";
 import KafkaResolver from "./kafka.resolver";
 import { NoteCommentResolver } from "./noteCommentResolver/noteComment.resolver";
 import { NoteResolver } from "./noteResolver/note.resolver";
+import { PayLevelResolver } from "./payLevelResolver/payLevel.resolver";
+import { PayTableResolver } from "./payTableResolver/payTable.resolver";
+import { PayandBillColumnResolver } from "./payandbillColumnResolver/payandbillColumn.resolver";
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
@@ -56,4 +59,7 @@ export const resolvers = [
     SiteGroupObjectResolver,
     SiteGroupResolver,
     SiteObjectResolver,
+    PayandBillColumnResolver,
+    PayLevelResolver,
+    PayTableResolver
 ] as const
