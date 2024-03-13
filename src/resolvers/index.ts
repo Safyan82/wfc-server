@@ -19,11 +19,13 @@ import { PayandBillColumnResolver } from "./payandbillColumnResolver/payandbillC
 import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
+import { ShiftTypeResolver } from "./shiftTypeResolver/shiftType.resolver";
 import { SiteGroupObjectResolver } from "./siteGroupObjectResolver/siteGroupObject.resolver";
 import SiteGroupResolver from "./siteGroupResolver/siteGroup.resolver";
 import { SiteObjectResolver } from "./siteObjectResolver/siteObject.resolver";
 import { SkillCategoryResolver } from "./skillCategoryResolver/skillCategory.resolver";
 import { SkillResolver } from "./skillResolver/skill.resolver";
+import { SummaryShiftTypeResolver } from "./summaryShiftTypeResolver/summaryShiftType.resolver";
 import { ThemeResolver } from "./themeResolver/theme.resolver";
 import { UserAccessResolver } from "./userAccessResolver/userAccess.resolver";
 import UserResolver from "./userResolver/user.resolver";
@@ -61,5 +63,7 @@ export const resolvers = [
     SiteObjectResolver,
     PayandBillColumnResolver,
     PayLevelResolver,
-    PayTableResolver
+    PayTableResolver,
+    SummaryShiftTypeResolver,
+    ShiftTypeResolver
 ] as const
