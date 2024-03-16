@@ -10,13 +10,13 @@ export class CustomerPayTableResolver{
 
     @Authorized()
     @Mutation(()=>PayTableResponse)
-    upsertPayTable(@Arg('input') input: PayTableInput){
+    upsertCustomerPayTable(@Arg('input') input: PayTableInput){
         return this.customerPayTableService.upsertCustomerPayTable(input);
     }
 
     @Authorized()
     @Query(()=>PayTableResponse)
-    getPayTable(){
+    getCustomerPayTable(){
         return this.customerPayTableService.getCustomerPayTable();
     }
 };

@@ -4,6 +4,7 @@ import { BranchPropertyHistoryResolver } from "./branchPropertyHistoryResolver/b
 import BranchResolver from "./branchResolver/branch.resolver";
 import BranchViewResolver from "./branchViewResolver/branchView.resolver";
 import { CustomerObjectResolver } from "./customerObjectResolver/customerObject.resolver";
+import { CustomerPayTableResolver } from "./customerPayTableResolver/customerPayTable.resolver";
 import { CustomerResolver } from "./customerResolver/customer.resolver";
 import { EmployeeDetailViewResolver } from "./employeeDetailViewResolver/employeeDetailView.resolver";
 import { EmployeeObjectResolver } from "./employeeObjectResolver/employeeObject.resolver";
@@ -68,7 +69,7 @@ export const resolvers = [
     PayTableResolver,
     SummaryShiftTypeResolver,
     ShiftTypeResolver,
-    
+    CustomerPayTableResolver,
     CustomerObjectResolver,
     CustomerResolver
 ] as const
