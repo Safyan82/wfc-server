@@ -1,3 +1,6 @@
+import { AgencyObject } from "../schema/agencyObjectSchema/agencyObject.schema";
+import { AgencyObjectResolver } from "./agencyObjectResolver/agencyObject.resolver";
+import { AgencyResolver } from "./agencyResolver/agency.resolver";
 import { BranchDetailViewResolver } from "./branchDetailViewResolver/branchDetailView.Resolver";
 import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolver";
 import { BranchPropertyHistoryResolver } from "./branchPropertyHistoryResolver/branchPropertyHistory.resolver";
@@ -71,5 +74,8 @@ export const resolvers = [
     ShiftTypeResolver,
     CustomerPayTableResolver,
     CustomerObjectResolver,
-    CustomerResolver
+    CustomerResolver,
+    
+    AgencyObjectResolver,
+    AgencyResolver
 ] as const

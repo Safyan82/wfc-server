@@ -4,6 +4,7 @@ export const objectTypeList = {
     Site: "Site",
     SiteGroup: "SiteGroup",
     customer: "Customer",
+    Agency: "Agency",
 };
 
 export const accessType = {
