@@ -12,10 +12,10 @@ const extractPermittedProps = (ctx, obj) => {
 
 const extractPermittedPropIds = (ctx, obj) => {
     const propsPermission = Object.keys(ctx?.user?.permission[obj]).slice(3);
+    console.log(propsPermission, "extractPermittedPropIds")
     const properties = propsPermission?.filter((prop)=>
         ctx?.user?.permission[obj][prop]?.visible==1
     )
-    console.log(properties, "extractPermittedPropIds")
     const PropertiesObjectType = properties?.map((prop)=>new mongoose.Types.ObjectId(prop)) || [];
     return PropertiesObjectType;
 }

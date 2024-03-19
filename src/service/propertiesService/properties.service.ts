@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import { SiteGroupObjectService } from "../siteGroupObjectService/siteGroupObject.service";
 import { SiteObjectService } from "../siteObjectSerivce/siteObject.service";
 import { CustomerObjectService } from "../customerObjectService/customerObject.service";
+import { AgencyObjectService } from "../agencyObjectService/agencyObject.service";
 
 export class PropertiesService{
     
@@ -21,6 +22,7 @@ export class PropertiesService{
             const siteGroupObjectService = new SiteGroupObjectService();
             const siteObjectService = new SiteObjectService();
             const customerObjectService = new CustomerObjectService();
+            const agencyObjectService = new AgencyObjectService();
 
             const generatedPropert = await PropertiesModal.create({...input, 
                 isDelete: 0,
@@ -43,6 +45,9 @@ export class PropertiesService{
                 }
                 else if(input?.objectType===objectTypeList.customer){
                     await customerObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
+                }
+                else if(input?.objectType===objectTypeList.Agency){
+                    await agencyObjectService.generateMandatoryObject(generatedPropert?._id, input?.rules?.ownedby);
                 }
             }
             return {
@@ -119,6 +124,7 @@ export class PropertiesService{
             const siteGroupObjectService = new SiteGroupObjectService();
             const siteObjectService = new SiteObjectService();
             const customerObjectService = new CustomerObjectService();
+            const agencyObjectService = new AgencyObjectService();
 
             if(input?.objectType===objectTypeList.Branch){
                 await branchObjectService.updateMandatoryObject(input.id, input?.rules?.ownedby)
@@ -135,6 +141,10 @@ export class PropertiesService{
             else if(input?.objectType===objectTypeList.customer){
                 await customerObjectService.generateMandatoryObject(input.id, input?.rules?.ownedby);
             }
+            else if(input?.objectType===objectTypeList.Agency){
+                await agencyObjectService.generateMandatoryObject(input.id, input?.rules?.ownedby);
+            }
+            
             // }
             
             return {

@@ -1,18 +1,44 @@
 import dayjs from "dayjs";
-import { BranchObject, branchObjectModal } from "../../schema/branchObjectSchema/branchObject.schema";
 import { PropertiesService } from "../propertiesService/properties.service";
 import { objectTypeList } from "../../utils/objectype";
 import { extractPermittedPropIds } from "../../utils/permissionPower/extractPermittedProps";
 import mongoose from "mongoose";
+import { AgencyObjectModal } from "../../schema/agencyObjectSchema/agencyObject.schema";
 
-export class BranchObjectService{
-    
+
+export class AgencyObjectService{
+    async generateMandatoryObject(propertyId, isReadOnly){
+        try{
+            const isExist  = await AgencyObjectModal.findOne({propertyId: propertyId});
+            if(isExist){
+                await AgencyObjectModal.updateOne({propertyId},{isReadOnly})
+            }else{
+
+                // do it to update use in prop
+                const property = new PropertiesService();
+                const propertyDetail = await property.getPropertyById(propertyId);
+                const useIn = Number(propertyDetail?.useIn) + 1;
+            
+                await property?.updatePropertyInUse(propertyId, useIn);
+            
+                await AgencyObjectModal.create({
+                    propertyId,
+                    isMandatory: 1,
+                    isReadOnly: isReadOnly? isReadOnly: false,
+                    date: dayjs(),
+                });
+            }
+        }catch(err){
+            throw new Error(err.message);
+        }
+    }
+     
     async updateMandatoryObject(propertyId, isReadOnly){
         try{
             
-            const isExist  = await branchObjectModal.findOne({propertyId: propertyId});
+            const isExist  = await AgencyObjectModal.findOne({propertyId: propertyId});
             if(isExist){
-                await branchObjectModal.updateOne({propertyId},{isReadOnly})
+                await AgencyObjectModal.updateOne({propertyId},{isReadOnly})
             }
             else{
                 if(isReadOnly==true){
@@ -25,36 +51,34 @@ export class BranchObjectService{
         }
     }
 
-    async generateMandatoryObject(propertyId, isReadOnly){
+    async deleteAgencyObject({properties}){
         try{
-            const isExist  = await branchObjectModal.findOne({propertyId: propertyId});
-            if(isExist){
-                await branchObjectModal.updateOne({propertyId},{isReadOnly})
-            }else{
 
-                // do it to update use in prop
-                const property = new PropertiesService();
-                const propertyDetail = await property.getPropertyById(propertyId);
-                const useIn = Number(propertyDetail?.useIn) + 1;
+            await AgencyObjectModal.deleteMany({propertyId: { $in: properties}});
             
-                await property?.updatePropertyInUse(propertyId, useIn);
-            
-                await branchObjectModal.create({
-                    propertyId,
-                    isMandatory: 1,
-                    isReadOnly: isReadOnly? isReadOnly: false,
-                    date: dayjs(),
-                });
+                    
+            const property = new PropertiesService();
+            Promise.all(properties?.map(async (prop)=>{
+                const propertyDetail = await property.getPropertyById(prop);
+                const useIn = Number(propertyDetail?.useIn) - 1;
+                
+                return await property?.updatePropertyInUse(prop, useIn);
+            }));
+
+            return {
+                 response: properties
             }
-        }catch(err){
+        }
+        catch(err){
             throw new Error(err.message);
         }
     }
 
-    async updateBranchObjectOrder({fields}){
+    
+    async updateAgencyObjectOrder({fields}){
         try{
             await Promise.all(fields?.map(async(field, index)=>{
-                return await branchObjectModal.updateOne({propertyId: field?.propertyId},{$set:{order: index}})
+                return await AgencyObjectModal.updateOne({propertyId: field?.propertyId},{$set:{order: index}})
             }));
             return{
                 response:{
@@ -68,13 +92,13 @@ export class BranchObjectService{
         }
     }
 
-    async createBranchObject({fields}){
+    async createAgencyObject({fields}){
         try{
             await Promise.all(fields?.map(async(schema)=>{
-                const isExist  = await branchObjectModal.findOne({propertyId: schema?.propertyId});
+                const isExist  = await AgencyObjectModal.findOne({propertyId: schema?.propertyId});
                 if(isExist && Object.keys(isExist)?.length>0){
 
-                    return await branchObjectModal.updateOne({propertyId: schema?.propertyId},{
+                    return await AgencyObjectModal.updateOne({propertyId: schema?.propertyId},{
                         $set:{isMandatory: schema?.isMandatory},
                     });
 
@@ -86,7 +110,7 @@ export class BranchObjectService{
                     const useIn = Number(propertyDetail?.useIn) + 1;
                 
                     await property?.updatePropertyInUse(schema?.propertyId, useIn);
-                    return await branchObjectModal.create({
+                    return await AgencyObjectModal.create({
                         ...schema,
                         isReadOnly: 0,
                         date: dayjs(),
@@ -106,20 +130,20 @@ export class BranchObjectService{
         }
     }
 
-    async branchObject(ctx){
+    async agencyObject(ctx){
         try{
 
-            
             // get all owned Props by particular requesting user
             
             const propService = new PropertiesService();
 
-            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Branch, ctx?.user?.userAccessType);
+            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Agency, ctx?.user?.userAccessType);
 
             // terminate all owned props
 
 
-            const Permittedproperties =  ctx?.user?.userAccessType!== "ADMIN PERMISSION" ? extractPermittedPropIds(ctx, objectTypeList.Branch) || [] : [];
+            const Permittedproperties = ctx?.user?.userAccessType!== "ADMIN PERMISSION" ? extractPermittedPropIds(ctx, objectTypeList.Agency) || [] : [];
+
             // get all the created properties that are not in list of permitted properties
             // case 1;  in created properties there can be permitted props
             // case 2;  props can be created after the user created for the particulat object type
@@ -131,16 +155,27 @@ export class BranchObjectService{
                 }
             });
             
-            const extendedPermittedProperties = [...Permittedproperties, ...getNewlyCreatedProps];
+            const extendedPermittedProperties = [...getNewlyCreatedProps, ...Permittedproperties];
+            let matchStage = {
+                $match: {
+                    $and: [
+                        {
+                            propertyId: {
+                                $ne: null
+                            }
+                        }
+                    ]
+                }
+            };
+
+            if(Permittedproperties?.length>0){
+                matchStage.$match.$and.push({
+                    propertyId: {$in: extendedPermittedProperties}
+                })
+            }
             
-
-
-            const branchObjectData = await branchObjectModal.aggregate([
-                {
-                    $match:{
-                        propertyId:{ $in: extendedPermittedProperties}
-                    }
-                },
+            const agencyObjectData = await AgencyObjectModal.aggregate([
+                matchStage,
                 {
                   $lookup: {
                     from: "properties",
@@ -169,48 +204,18 @@ export class BranchObjectService{
                   }
                 }
             ]);
-            const branchObject = (branchObjectData?.filter((branch)=>
-                branch?.propertyDetail?.isArchive!=true))
+
+            const agencyObject = (agencyObjectData?.filter((agency)=>
+                agency?.propertyDetail?.isArchive!=true))
             
+            // console.log(agencyObject, "agencyObject");
+
             return {
-                response: branchObject
+                response: agencyObject
             }
         }
         catch(err){
             throw new Error(err.message);
         }
     }
-
-    async deleteBranchObject({properties}){
-        try{
-
-            await branchObjectModal.deleteMany({propertyId: { $in: properties}});
-            
-                    
-            const property = new PropertiesService();
-            Promise.all(properties?.map(async (prop)=>{
-                const propertyDetail = await property.getPropertyById(prop);
-                const useIn = Number(propertyDetail?.useIn) - 1;
-                
-                return await property?.updatePropertyInUse(prop, useIn);
-            }));
-
-            return {
-                 response: properties
-            }
-        }
-        catch(err){
-            throw new Error(err.message);
-        }
-    }
-
-    async getSinglePropFromBranchObjectSchema(id){
-        try{
-            const {isMandatory} = await branchObjectModal.findById(id);
-            return isMandatory;
-        }
-        catch(err){
-            throw new Error(err.message);
-        }
-    }
-};
+}
