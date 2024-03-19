@@ -4,13 +4,13 @@ import { ObjectId } from "mongoose";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 
 @ObjectType()
-export class CustomerPayTable{
+export class AgencyPayTable{
     @Field(()=>ID)
     _id: string
 
     @Field(()=>ID)
     @Prop()
-    customerId: ObjectId
+    agencyId: ObjectId
 
     @Field(()=>ID)
     @Prop()
@@ -27,11 +27,11 @@ export class CustomerPayTable{
 }
 
 @InputType()
-export class CustomerPayTableInput{
+export class AgencyPayTableInput{
 
     @Field(()=>ID, {nullable: true})
     @Prop()
-    customerId: ObjectId
+    agencyId: ObjectId
 
     @Field(()=>ID, {nullable: true})
     @Prop()
@@ -44,7 +44,7 @@ export class CustomerPayTableInput{
 }
 
 @ObjectType()
-export class CustomerPayTableResponse{
+export class AgencyPayTableResponse{
 
     @Field(()=>GraphQLJSON)
     response: any
@@ -55,4 +55,4 @@ export class CustomerPayTableResponse{
 }
 
 
-export const CustomerPayTableModal = getModelForClass(CustomerPayTable);
+export const AgencyPayTableModal = getModelForClass(AgencyPayTable);

@@ -137,12 +137,13 @@ export class AgencyObjectService{
             
             const propService = new PropertiesService();
 
-            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Agency);
+            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Agency, ctx?.user?.userAccessType);
 
             // terminate all owned props
 
 
-            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Agency) || [];
+            const Permittedproperties = ctx?.user?.userAccessType!== "ADMIN PERMISSION" ? extractPermittedPropIds(ctx, objectTypeList.Agency) || [] : [];
+
             // get all the created properties that are not in list of permitted properties
             // case 1;  in created properties there can be permitted props
             // case 2;  props can be created after the user created for the particulat object type
@@ -154,8 +155,7 @@ export class AgencyObjectService{
                 }
             });
             
-            const extendedPermittedProperties = [...Permittedproperties, ...getNewlyCreatedProps];
-            
+            const extendedPermittedProperties = [...getNewlyCreatedProps, ...Permittedproperties];
             let matchStage = {
                 $match: {
                     $and: [
@@ -204,9 +204,12 @@ export class AgencyObjectService{
                   }
                 }
             ]);
+
             const agencyObject = (agencyObjectData?.filter((agency)=>
                 agency?.propertyDetail?.isArchive!=true))
             
+            // console.log(agencyObject, "agencyObject");
+
             return {
                 response: agencyObject
             }

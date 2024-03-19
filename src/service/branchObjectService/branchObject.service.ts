@@ -114,18 +114,22 @@ export class BranchObjectService{
             
             const propService = new PropertiesService();
 
-            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Employee);
+            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.Branch, ctx?.user?.userAccessType);
 
             // terminate all owned props
 
 
-            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.Branch);
+            const Permittedproperties =  ctx?.user?.userAccessType!== "ADMIN PERMISSION" ? extractPermittedPropIds(ctx, objectTypeList.Branch) || [] : [];
             // get all the created properties that are not in list of permitted properties
             // case 1;  in created properties there can be permitted props
             // case 2;  props can be created after the user created for the particulat object type
-            const getNewlyCreatedProps = ownedProp?.filter((ownedProp)=>
-                Permittedproperties.find((permittedProp)=>new mongoose.Types.ObjectId(permittedProp) !== new mongoose.Types.ObjectId(ownedProp))
-            );
+            const getNewlyCreatedProps = ownedProp?.filter((ownedProp)=>{
+                if(Permittedproperties?.length>0){
+                    return Permittedproperties.find((permittedProp)=>new mongoose.Types.ObjectId(permittedProp) !== new mongoose.Types.ObjectId(ownedProp))
+                }else{
+                    return ownedProp;
+                }
+            });
             
             const extendedPermittedProperties = [...Permittedproperties, ...getNewlyCreatedProps];
             

@@ -68,6 +68,6 @@ export const AgencyObjectModal = getModelForClass(AgencyObject);
 
 @ObjectType()
 export class GenericAgencyObjectResponse{
-    @Field(()=>GraphQLJSON)
+    @Field(()=>GraphQLJSON, {nullable: true})
     response:any
 }

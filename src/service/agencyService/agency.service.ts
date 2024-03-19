@@ -257,7 +257,7 @@ export default class AgencyService{
             const agency =  await AgencyModal.findById(_id);
             return {
                 _id: agency?._id,
-                customername: agency?.agencyname,
+                agencyname: agency?.agencyname,
                 metadata: agency?.metadata,
                 ...agency
             }

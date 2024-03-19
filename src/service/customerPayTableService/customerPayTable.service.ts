@@ -5,11 +5,11 @@ export class CustomerPayTableService{
     async upsertCustomerPayTable(input){
         try{
 
-            const {payLevelId, payTableMeta} = input;
+            const {payLevelId, payTableMeta, customerId} = input;
 
             const isExist = await CustomerPayTableModal.findOne({payLevelId});
             if(isExist){
-                await CustomerPayTableModal.updateOne( {payLevelId}, {$set: {payTableMeta}} );
+                await CustomerPayTableModal.updateOne( {payLevelId, customerId}, {$set: {payTableMeta}} );
 
             }else{
                 await CustomerPayTableModal.create({...input, createdAt: dayjs().format("DD/MM/YYYY HH:mm")});
@@ -26,9 +26,9 @@ export class CustomerPayTableService{
 
     }
 
-    async getCustomerPayTable(){
+    async getCustomerPayTable(customerId){
         try{
-            const payTable = await CustomerPayTableModal.find();
+            const payTable = await CustomerPayTableModal.find({customerId});
             return {
                 response: payTable,
                 message: "Customer Pay Table Reterived Successfully"

@@ -137,12 +137,12 @@ export class CustomerObjectService{
             
             const propService = new PropertiesService();
 
-            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.customer);
+            const ownedProp = await propService.getOwnedProp(ctx?.user?._id, objectTypeList.customer, ctx?.user?.userAccessType);
 
             // terminate all owned props
 
 
-            const Permittedproperties = extractPermittedPropIds(ctx, objectTypeList.customer) || [];
+            const Permittedproperties =  ctx?.user?.userAccessType!== "ADMIN PERMISSION" ? extractPermittedPropIds(ctx, objectTypeList.customer) || [] : [];
             // get all the created properties that are not in list of permitted properties
             // case 1;  in created properties there can be permitted props
             // case 2;  props can be created after the user created for the particulat object type

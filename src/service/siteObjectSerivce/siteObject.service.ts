@@ -131,7 +131,7 @@ export class SiteObjectService{
                 }
             });
             
-            const extendedPermittedProperties = [...Permittedproperties, ...ownedProp];
+            const extendedPermittedProperties = [...Permittedproperties, ...getNewlyCreatedProps];
             
             // console.log(extendedPermittedProperties, "prop", ctx?.user);
 

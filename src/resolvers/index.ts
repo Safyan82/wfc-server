@@ -1,5 +1,6 @@
 import { AgencyObject } from "../schema/agencyObjectSchema/agencyObject.schema";
 import { AgencyObjectResolver } from "./agencyObjectResolver/agencyObject.resolver";
+import { AgencyPayTableResolver } from "./agencyPayTableResolver/agencyPayTable.resolver";
 import { AgencyResolver } from "./agencyResolver/agency.resolver";
 import { BranchDetailViewResolver } from "./branchDetailViewResolver/branchDetailView.Resolver";
 import { BranchObjectResolver } from "./branchObjectResolver/branchObject.resolver";
@@ -77,5 +78,6 @@ export const resolvers = [
     CustomerResolver,
     
     AgencyObjectResolver,
-    AgencyResolver
+    AgencyResolver,
+    AgencyPayTableResolver,
 ] as const
