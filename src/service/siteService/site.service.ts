@@ -21,7 +21,7 @@ export default class SiteService{
         }
     }
 
-    async sitegroups(input, customSite){
+    async sites(input, customSite){
         try{
 
             const {filters} = input;

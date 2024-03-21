@@ -28,6 +28,7 @@ import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
 import { ShiftTypeResolver } from "./shiftTypeResolver/shiftType.resolver";
 import { SiteGroupObjectResolver } from "./siteGroupObjectResolver/siteGroupObject.resolver";
+import { SiteGroupPayTableResolver } from "./siteGroupPayTableResolver/siteGroupPayTable.resolver";
 import SiteGroupResolver from "./siteGroupResolver/siteGroup.resolver";
 import { SiteObjectResolver } from "./siteObjectResolver/siteObject.resolver";
 import { SkillCategoryResolver } from "./skillCategoryResolver/skillCategory.resolver";
@@ -63,16 +64,23 @@ export const resolvers = [
     SkillResolver,
     SkillCategoryResolver,
     EmployeeSkillResolver,
+    
     NoteResolver,
     NoteCommentResolver,
+
     SiteGroupObjectResolver,
     SiteGroupResolver,
+    SiteGroupPayTableResolver,
+
     SiteObjectResolver,
+    
     PayandBillColumnResolver,
     PayLevelResolver,
     PayTableResolver,
+    
     SummaryShiftTypeResolver,
     ShiftTypeResolver,
+    
     CustomerPayTableResolver,
     CustomerObjectResolver,
     CustomerResolver,

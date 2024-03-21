@@ -13,13 +13,13 @@ export class SiteGroup{
     @prop()
     sitegroupname:string;
 
-    // @Field(()=>String)
-    // @prop()
-    // customerId:ObjectId;
+    @Field(()=>String)
+    @prop()
+    customer:ObjectId;
 
-    // @Field(()=>ID)
-    // @prop()
-    // branchId:ObjectId;
+    @Field(()=>ID)
+    @prop()
+    branch:ObjectId;
 
     @Field(()=>GraphQLJSON,{nullable:true})
     @prop()
@@ -43,10 +43,10 @@ export class SiteGroups{
 
 @ObjectType()
 export class SiteGroupGenericResponse{
-    @Field(()=>Boolean)
+    @Field(()=>Boolean, {nullable: true})
     success:Boolean
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     message:string
 
     @Field(()=>GraphQLJSON, {nullable: true})
@@ -63,6 +63,12 @@ export class createSiteGroupInput{
     })
     @Field(()=>String)
     sitegroupname:String
+
+    @Field(()=>String)
+    branch:String
+
+    @Field(()=>String)
+    customer:String
 
     @Field(()=>GraphQLJSON,{nullable:true})
     metadata:any
