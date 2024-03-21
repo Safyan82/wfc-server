@@ -3,7 +3,7 @@ import { Branch, BranchFilter, BranchGenericResponse, BranchUpdateInput, Branche
 import { Context } from "../../utils/context";
 import mongoose from "mongoose";
 import SiteGroupService from "../../service/SiteGroupService/siteGroup.service";
-import { BulkSiteGroupUpdateInput, SiteGroup, SiteGroupFilter, SiteGroupGenericResponse, createSiteGroupInput } from "../../schema/siteGroupSchema/siteGroup.schema";
+import { BulkSiteGroupUpdateInput, SiteGroup, SiteGroupFilter, SiteGroupGenericResponse, SiteGroupUpdateInput, createSiteGroupInput } from "../../schema/siteGroupSchema/siteGroup.schema";
 
 @Resolver()
 export default class SiteGroupResolver {
@@ -23,14 +23,14 @@ export default class SiteGroupResolver {
         return this.siteGroupService.sitegroups(input, customSiteGroup)
     }
 
-    @Query(()=>SiteGroup)
+    @Query(()=>SiteGroupGenericResponse)
     siteGroup(@Arg('_id') _id: String){
         return this.siteGroupService.siteGroup(_id)
     }
 
     @Authorized()
     @Mutation(()=>SiteGroupGenericResponse)
-    updateSiteGroup(@Ctx() ctx:Context ,@Arg('input', {validate: true}) input:BranchUpdateInput ){
+    updateSiteGroup(@Ctx() ctx:Context ,@Arg('input', {validate: true}) input:SiteGroupUpdateInput ){
         return this.siteGroupService.updateSiteGroup(input, ctx);
     }
 

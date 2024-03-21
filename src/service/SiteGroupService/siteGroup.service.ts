@@ -9,7 +9,8 @@ export default class SiteGroupService{
     async createSiteGroup(input){
         try{
             const createdDate = dayjs().format('YYYY-MM-DD');
-            const sitegroup =  await SiteGroupModal.create({...input, createdDate});
+            const {branch, customer, ...rest} = input;
+            const sitegroup =  await SiteGroupModal.create({...rest, branch: new mongoose.Types.ObjectId(branch), customer: new mongoose.Types.ObjectId(customer), createdDate});
             return {
                 success: 1,
                 response: sitegroup,
@@ -34,13 +35,13 @@ export default class SiteGroupService{
                 }
             };
 
-            if(customSiteGroup?.length>0){
-                matchStage.$match.$and.push(
-                {_id: {
-                    $in: customSiteGroup
-                }}
-                );
-            }
+            // if(customSiteGroup?.length>0){
+            //     matchStage.$match.$and.push(
+            //     {_id: {
+            //         $in: customSiteGroup
+            //     }}
+            //     );
+            // }
 
             matchStage.$match.$and.push({
                 sitegroupname:{
@@ -194,17 +195,24 @@ export default class SiteGroupService{
             const siteGroup = await SiteGroupModal.aggregate([
                 matchStage,
                 {
-                    $project: {
-                      key: "$_id",
-                      _id: 1,
-                      // Include other fields if needed
-                      sitegroupname: 1,
-                      metadata: 1,
-                      createdDate: 1,
+                    $lookup:{
+                        localField:'customer',
+                        foreignField:'_id',
+                        from:'customers',
+                        as:'customerDetail',
+                    }
+                },
+                {
+                    $lookup:{
+                        localField:'branch',
+                        foreignField:'_id',
+                        from:'branches',
+                        as:'branchDetail',
                     }
                 }
             ]);
-            return siteGroup;
+            const updatedSiteGroup = siteGroup.map((sitegrp)=>({...sitegrp, branch: sitegrp?.branchDetail[0]?.branchname, customer: sitegrp?.customerDetail[0]?.customername}))
+            return updatedSiteGroup;
         }
         catch(err){
             throw new Error(err);
@@ -218,12 +226,12 @@ export default class SiteGroupService{
             let data = {$set:{}};
             // const branchPropertyHistory = new BranchPropertyHistoryService();
 
-            const siteGroupData = await this.siteGroup(_id);
+            const siteGroupData = await this.siteGroup(new mongoose.Types.ObjectId(_id));
             
             rest?.properties?.map(async(prop)=>{
                 if(prop.metadata){
                     data.$set[`metadata.${prop.name}`]=prop.value;
-                    if(Object.keys(siteGroupData.metadata).includes(prop.name)){
+                    if(Object.keys(siteGroupData?.response?.metadata).includes(prop.name)){
                         // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
                         // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData.metadata[prop?.name], _id);
                     }
@@ -235,7 +243,8 @@ export default class SiteGroupService{
                     }
                 }
             });
-            await SiteGroupModal.updateOne({_id}, data);
+            console.log(data, "st data", new mongoose.Types.ObjectId(_id))
+            await SiteGroupModal.updateOne({_id: new mongoose.Types.ObjectId(_id)}, data);
             return {
                 success: 1,
                 message: "site Group updated successfully",
@@ -252,12 +261,41 @@ export default class SiteGroupService{
 
     async siteGroup(_id){
         try{
-            const siteGroup =  await SiteGroupModal.findById(_id);
+            const siteGroup =  await SiteGroupModal
+            .aggregate([
+                {
+                    $match:{
+                        _id: new mongoose.Types.ObjectId(_id)
+                    }
+                },
+                {
+                    $lookup:{
+                        localField:'customer',
+                        foreignField:'_id',
+                        from:'customers',
+                        as:'customerDetail',
+                    }
+                },
+                {
+                    $lookup:{
+                        localField:'branch',
+                        foreignField:'_id',
+                        from:'branches',
+                        as:'branchDetail',
+                    }
+                }
+            ]);
+            
             return {
-                _id: siteGroup?._id,
-                sitegroupname: siteGroup?.sitegroupname,
-                metadata: siteGroup?.metadata,
-                ...siteGroup
+                response:{
+                    _id: siteGroup[0]?._id,
+                    sitegroupname: siteGroup[0]?.sitegroupname,
+                    customer: siteGroup[0]?.customerDetail[0]?.customername,
+                    branch: siteGroup[0]?.branchDetail[0]?.branchname,
+                    metadata: siteGroup[0]?.metadata,
+                    customerId: siteGroup[0]?.customerDetail[0]?._id,
+                    branchId: siteGroup[0]?.branchDetail[0]?._id,
+                }
             }
         }
         catch(err){
