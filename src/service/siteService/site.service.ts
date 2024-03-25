@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import { BranchPropertyHistoryService } from "../branchPropertyHistoryService/branchPropertyHistory.service";
 import mongoose from "mongoose";
 import { SiteModal } from "../../schema/siteSchema/site.schema";
 import { SiteObjectService } from "../siteObjectSerivce/siteObject.service";
@@ -9,10 +8,10 @@ export default class SiteService{
     async createSite(input){
         try{
             const createdDate = dayjs().format('YYYY-MM-DD');
-            const sitegroup =  await SiteModal.create({...input, createdDate});
+            const site =  await SiteModal.create({...input, createdDate});
             return {
                 success: 1,
-                response: sitegroup,
+                response: site,
                 message: "site group was added",
             };
         }
@@ -63,7 +62,7 @@ export default class SiteService{
                         const propName = filterDetail?.operator?.replace(/\s/g,"").toLowerCase();
                        
                         if(filterDetail.filter==="contain_exactly"){
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
                                     return {
                                         [propName] : {$regex: value.toLowerCase(), $options: "i"},
@@ -91,7 +90,7 @@ export default class SiteService{
                         }
 
                         if(filterDetail.filter==="not_contain"){
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
 
                                 const orCondition = filterDetail?.filterValue.map((value)=>{
                                     return {
@@ -119,7 +118,7 @@ export default class SiteService{
                             }
                         }
                         if(filterDetail.filter==="is_known"){
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
                                 matchStage.$match.$and.push({[propName]: {$exists: true}});
                             }else{
                                 matchStage.$match.$and.push({[`metadata.${propName}`]: {$exists: true}});
@@ -127,7 +126,7 @@ export default class SiteService{
                         }
                         if(filterDetail.filter==="is_unknown"){
                             
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
                                 matchStage.$match.$and.push({[propName]: {$exists: false}});
                             }else{
                                 matchStage.$match.$and.push({[`metadata.${propName}`]: {$exists: false}});
@@ -137,7 +136,7 @@ export default class SiteService{
                         // date is equal will both for part of object schema and metadata as well
                         if(filterDetail.filter=="is_equal"){
                             
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
                                 matchStage.$match.$and.push({[propName]: filterDetail?.filterValue });
                             }else{
                                 matchStage.$match.$and.push({[`metadata.${propName}`]: filterDetail?.filterValue });
@@ -148,7 +147,7 @@ export default class SiteService{
                         // date is before will both for part of object schema and metadata as well
                         if(filterDetail.filter=="is_before"){
                             
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
                                 matchStage.$match.$and.push({[propName]: {$lt: filterDetail?.filterValue} });
                             }else{
                                 matchStage.$match.$and.push({[`metadata.${propName}`]: {$lt: filterDetail?.filterValue} });
@@ -159,7 +158,7 @@ export default class SiteService{
                         // date is after will both for part of object schema and metadata as well
                         if(filterDetail.filter=="is_after"){
                             
-                            if(propName=="sitename"){
+                            if(propName=="sitename" || propName=="postcode" || propName=="sitegroupId" || propName=="contactstartdate"){
                                 matchStage.$match.$and.push({[propName]: {$gt: filterDetail?.filterValue} });
                             }else{
                                 matchStage.$match.$and.push({[`metadata.${propName}`]: {$gt: filterDetail?.filterValue} });
@@ -199,6 +198,9 @@ export default class SiteService{
                       _id: 1,
                       // Include other fields if needed
                       sitename: 1,
+                      postcode: 1,
+                      sitegroupId: 1,
+                      contactstartdate: 1,
                       metadata: 1,
                       createdDate: 1,
                     }
@@ -218,7 +220,7 @@ export default class SiteService{
             let data = {$set:{}};
             // const branchPropertyHistory = new BranchPropertyHistoryService();
 
-            const SiteData = await this.Site(_id);
+            const {response: SiteData} = await this.Site(_id);
             
             rest?.properties?.map(async(prop)=>{
                 if(prop.metadata){
@@ -254,8 +256,7 @@ export default class SiteService{
         try{
             const Site =  await SiteModal.findById(_id);
             return {
-                branchname: Site?.sitename,
-                metadata: Site?.metadata,
+                response: Site
             }
         }
         catch(err){
