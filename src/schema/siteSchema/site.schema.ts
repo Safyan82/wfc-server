@@ -66,16 +66,16 @@ export class createSiteInput{
         message: "Please enter meaningfull site name",
     })
     @Field(()=>String)
-    sitename:String
+    sitename:string
 
     @Field(()=>String)
-    postcode:String
+    postcode:string
 
     @Field(()=>String)
-    sitegroupId:String
+    sitegroupId:string
 
     @Field(()=>String)
-    contactstartdate:String
+    contractstartdate:string
 
     @Field(()=>GraphQLJSON,{nullable:true})
     metadata:any
