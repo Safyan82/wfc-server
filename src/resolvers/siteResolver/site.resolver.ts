@@ -3,7 +3,7 @@ import { Context } from "../../utils/context";
 import mongoose from "mongoose";
 import { SiteGroupFilter, createSiteGroupInput } from "../../schema/siteGroupSchema/siteGroup.schema";
 import SiteService from "../../service/siteService/site.service";
-import { BulkSiteUpdateInput, Site, SiteGenericResponse, SiteUpdateInput, createSiteInput } from "../../schema/siteSchema/site.schema";
+import { BulkSiteUpdateInput, Site, SiteGenericResponse, SiteResponse, SiteUpdateInput, createSiteInput } from "../../schema/siteSchema/site.schema";
 
 @Resolver()
 export default class SiteResolver {
@@ -17,7 +17,7 @@ export default class SiteResolver {
     }
 
     @Authorized()
-    @Query(()=>[Site])
+    @Query(()=>[SiteResponse])
     sites(@Ctx() ctx: Context, @Arg('input', {validate: true}) input: SiteGroupFilter,){
         // const customSiteGroup = ctx?.user?.permission?.Branch?.customSiteGroup?.map((siteGroup)=>new mongoose.Types.ObjectId(siteGroup.id));
         return this.siteService.sites(input, []);
