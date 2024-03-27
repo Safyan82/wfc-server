@@ -193,6 +193,14 @@ export default class SiteService{
             const Site = await SiteModal.aggregate([
                 matchStage,
                 {
+                    $lookup:{
+                        foreignField: '_id',
+                        localField:'sitegroupId',
+                        from:'sitegroups',
+                        as:'sitegroupDetail',
+                    }
+                },
+                {
                     $project: {
                       key: "$_id",
                       _id: 1,
@@ -200,9 +208,10 @@ export default class SiteService{
                       sitename: 1,
                       postcode: 1,
                       sitegroupId: 1,
-                      contactstartdate: 1,
+                      contractstartdate: 1,
                       metadata: 1,
                       createdDate: 1,
+                      sitegroupDetail: 1,
                     }
                 }
             ]);
@@ -225,16 +234,16 @@ export default class SiteService{
             rest?.properties?.map(async(prop)=>{
                 if(prop.metadata){
                     data.$set[`metadata.${prop.name}`]=prop.value;
-                    if(Object.keys(SiteData.metadata).includes(prop.name)){
-                        // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
-                        // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData.metadata[prop?.name], _id);
-                    }
+                    // if(Object.keys(SiteData.metadata).includes(prop.name)){
+                    //     // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
+                    //     // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData.metadata[prop?.name], _id);
+                    // }
                 }else{
                     data.$set[prop.name] = prop.value;
-                    if(Object.keys(SiteData).includes(prop.name)){
-                        // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
-                        // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData[prop?.name], _id);
-                    }
+                    // if(Object.keys(SiteData).includes(prop.name)){
+                    //     // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, prop.value, _id, ctx?.user?.employeeId);
+                    //     // await branchPropertyHistory.createBranchPropertyHistoryRecord(prop?.propertyId, branchData[prop?.name], _id);
+                    // }
                 }
             });
             await SiteModal.updateOne({_id}, data);
@@ -254,9 +263,40 @@ export default class SiteService{
 
     async Site(_id){
         try{
-            const Site =  await SiteModal.findById(_id);
+            const Site =  await SiteModal.aggregate([
+                {
+                    $match:{
+                        _id
+                    }
+                },
+                {
+                    $lookup:{
+                        foreignField: '_id',
+                        localField:'sitegroupId',
+                        from:'sitegroups',
+                        as:'sitegroupDetail',
+                    }
+                },
+                {
+                    $project: {
+                      key: "$_id",
+                      _id: 1,
+                      // Include other fields if needed
+                      sitename: 1,
+                      postcode: 1,
+                      sitegroupId: 1,
+                      contractstartdate: 1,
+                      metadata: 1,
+                      createdDate: 1,
+                      sitegroupDetail: 1,
+                    }
+                }
+            ]);
+
             return {
-                response: Site
+                response: Site[0],
+                success: 1,
+                message: "Site has been reterived successfully"
             }
         }
         catch(err){

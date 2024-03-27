@@ -40,6 +40,13 @@ export class Site{
 }
 
 @ObjectType()
+export class SiteResponse extends Site{
+    @Field(()=>GraphQLJSON, {nullable: true})
+    @Prop()
+    sitegroupDetail: any
+}
+
+@ObjectType()
 export class Sites{
     @Field(()=>[Site])
     sites:Site[]
