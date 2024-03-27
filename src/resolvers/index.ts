@@ -31,6 +31,7 @@ import { SiteGroupObjectResolver } from "./siteGroupObjectResolver/siteGroupObje
 import { SiteGroupPayTableResolver } from "./siteGroupPayTableResolver/siteGroupPayTable.resolver";
 import SiteGroupResolver from "./siteGroupResolver/siteGroup.resolver";
 import { SiteObjectResolver } from "./siteObjectResolver/siteObject.resolver";
+import { SitePayTableResolver } from "./sitePayTableResolver/sitePayTable.resolver";
 import SiteResolver from "./siteResolver/site.resolver";
 import { SkillCategoryResolver } from "./skillCategoryResolver/skillCategory.resolver";
 import { SkillResolver } from "./skillResolver/skill.resolver";
@@ -75,6 +76,7 @@ export const resolvers = [
 
     SiteObjectResolver,
     SiteResolver,
+    SitePayTableResolver,
     
     PayandBillColumnResolver,
     PayLevelResolver,
@@ -90,4 +92,6 @@ export const resolvers = [
     AgencyObjectResolver,
     AgencyResolver,
     AgencyPayTableResolver,
+
+
 ] as const
