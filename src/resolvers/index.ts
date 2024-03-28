@@ -27,6 +27,7 @@ import { PropertiesResolver } from "./propertiesResolver/propertiesResolver";
 import { SearchResolver } from "./searchResolver/search.resolver";
 import { selectedSearchResolver } from "./selectedSearchResolver/selectedSearch.resolver";
 import { ShiftTypeResolver } from "./shiftTypeResolver/shiftType.resolver";
+import { SiteAreaResolver } from "./siteAreaResolver/siteAreaResolver";
 import { SiteGroupObjectResolver } from "./siteGroupObjectResolver/siteGroupObject.resolver";
 import { SiteGroupPayTableResolver } from "./siteGroupPayTableResolver/siteGroupPayTable.resolver";
 import SiteGroupResolver from "./siteGroupResolver/siteGroup.resolver";
@@ -77,6 +78,7 @@ export const resolvers = [
     SiteObjectResolver,
     SiteResolver,
     SitePayTableResolver,
+    SiteAreaResolver,
     
     PayandBillColumnResolver,
     PayLevelResolver,
