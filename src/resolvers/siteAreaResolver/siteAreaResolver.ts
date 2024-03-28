@@ -20,8 +20,8 @@ export class SiteAreaResolver{
     }
 
     @Query(()=>[SiteArea])
-    getSiteAreas(){
-        return this.siteAreaService.getSiteAreas();
+    getSiteAreas(@Arg('siteId') siteId: string){
+        return this.siteAreaService.getSiteAreas(new mongoose.Types.ObjectId(siteId));
     }
 
 

@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { SiteAreaModal } from "../../schema/siteAreaSchema/siteArea.schema";
 
 export class SiteAreaService{
-    async getSiteAreas(){
+    async getSiteAreas(siteId){
         try{
-            const siteAreas = await SiteAreaModal.find({isDeleted: false});
+            const siteAreas = await SiteAreaModal.find({siteId, isDeleted: false});
             return siteAreas;
         }catch(err){
             throw new Error(err.message);
