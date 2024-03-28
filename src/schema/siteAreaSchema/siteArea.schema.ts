@@ -6,18 +6,22 @@ import { Field, ID, InputType, ObjectType } from "type-graphql";
 @ObjectType()
 export class SiteArea{
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     _id: string
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @Prop()
     areaname: string
 
-    @Field(()=>ID)
+    @Field(()=>ID, {nullable: true})
     @Prop()
     siteId: ObjectId
 
-    @Field(()=>String)
+    @Field(()=>Boolean, {nullable: true})
+    @Prop({default: false})
+    isDeleted: boolean
+
+    @Field(()=>String, {nullable: true})
     @Prop({default: dayjs().format("DD/MM/YYYY")})
     createdAt: string
 
@@ -29,11 +33,15 @@ export class SiteArea{
 @InputType()
 export class siteAreaInput{
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
+    @Prop()
+    id: string
+
+    @Field(()=>String, {nullable: true})
     @Prop()
     areaname: string
 
-    @Field(()=>String)
+    @Field(()=>String, {nullable: true})
     @Prop()
     siteId: string
 }

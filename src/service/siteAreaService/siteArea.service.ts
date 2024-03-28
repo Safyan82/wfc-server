@@ -4,7 +4,7 @@ import { SiteAreaModal } from "../../schema/siteAreaSchema/siteArea.schema";
 export class SiteAreaService{
     async getSiteAreas(){
         try{
-            const siteAreas = await SiteAreaModal.find();
+            const siteAreas = await SiteAreaModal.find({isDeleted: false});
             return siteAreas;
         }catch(err){
             throw new Error(err.message);
@@ -22,11 +22,12 @@ export class SiteAreaService{
 
     }
 
-    async upsertSiteArea(_id, input){
+    async upsertSiteArea(input){
         try{
 
-            if(_id){
-                const updatedSite = await SiteAreaModal.updateOne({_id: new mongoose.Types.ObjectId(_id)}, {$set: input});
+            if(input?.id){
+                const {id, ...rest} = input;
+                const updatedSite = await SiteAreaModal.updateOne({_id: new mongoose.Types.ObjectId(id)}, {$set: rest});
                 return updatedSite;
             }else{
                 const site = await SiteAreaModal.create(input);
@@ -34,6 +35,16 @@ export class SiteAreaService{
             }
 
         }catch(err){
+            throw new Error(err.message);
+        }
+    }
+
+    async deleteSiteArea(input){
+        try{
+            const deletedSite = await SiteAreaModal.updateOne({_id: new mongoose.Types.ObjectId(input?.id)}, {$set: {isDeleted: true}})
+            return deletedSite;
+        }
+        catch(err){
             throw new Error(err.message);
         }
     }
