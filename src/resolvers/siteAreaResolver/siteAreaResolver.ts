@@ -10,8 +10,13 @@ export class SiteAreaResolver{
     }
 
     @Mutation(()=>SiteArea)
-    upsertSiteArea(@Arg('id', {nullable: true}) id:string, @Arg('input') input:siteAreaInput){
-        return this.siteAreaService.upsertSiteArea(null,input);
+    upsertSiteArea(@Arg('input') input:siteAreaInput){
+        return this.siteAreaService.upsertSiteArea(input);
+    }
+
+    @Mutation(()=>SiteArea)
+    deleteSiteArea(@Arg('input') input:siteAreaInput){
+        return this.siteAreaService.deleteSiteArea(input);
     }
 
     @Query(()=>[SiteArea])
